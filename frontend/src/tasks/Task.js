@@ -1,18 +1,18 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
-export default function Task({ task, handleTaskDelete, handleUpdateTask }) {
-    const [isEditing, setIsEditing] = useState(false);
-    const [value, setValue] = useState(task.text);
+export default function Task ({ task, handleTaskDelete, handleUpdateTask }) {
+    const [isEditing, setIsEditing] = useState(false)
+    const [value, setValue] = useState(task.text)
 
     const handleInputChange = (event) => {
-        setValue(event.target.value);
-    };
+        setValue(event.target.value)
+    }
 
     const handleSave = (task, newValue) => {
-        task.text = newValue;
+        task.text = newValue
         handleUpdateTask(task)
-        setIsEditing(false);
-    };
+        setIsEditing(false)
+    }
 
     if (isEditing) {
         return (
@@ -24,7 +24,7 @@ export default function Task({ task, handleTaskDelete, handleUpdateTask }) {
                 />
                 <button onClick={() => handleSave(task, value)}>Save</button>
             </>
-        );
+        )
     }
 
     return (

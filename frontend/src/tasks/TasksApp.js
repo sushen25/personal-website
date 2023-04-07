@@ -2,42 +2,40 @@ import { useState } from 'react'
 import TaskAdd from './TaskAdd'
 import TasksList from './TasksList'
 
-export default function TasksApp() {
-    const [id, setId] = useState(1);
-    const [tasks, setTasks] = useState([]);
+export default function TasksApp () {
+    const [id, setId] = useState(1)
+    const [tasks, setTasks] = useState([])
 
-    function getNextId() {
-        setId(id + 1);
-        return id;
+    function getNextId () {
+        setId(id + 1)
+        return id
     }
 
-    function handleAddTask(text) {
+    function handleAddTask (text) {
         setTasks([
             ...tasks,
             {
                 id: getNextId(),
-                text: text,
+                text
             }
         ])
     }
 
-    function handleUpdateTask(task) {
+    function handleUpdateTask (task) {
         setTasks(
             tasks.map((t) => {
                 if (t.id === task.id) {
-                return task;
+                    return task
                 } else {
-                return t;
+                    return t
                 }
             })
-        );
+        )
     }
 
-    function handleDeleteTask(taskId) {
-        setTasks(tasks.filter((t) => t.id !== taskId));
+    function handleDeleteTask (taskId) {
+        setTasks(tasks.filter((t) => t.id !== taskId))
     }
-
-    
 
     return (
         <>
@@ -45,5 +43,5 @@ export default function TasksApp() {
             <TaskAdd handleAddTask={handleAddTask}/>
             <TasksList tasks={tasks} handleTaskDelete={handleDeleteTask} handleUpdateTask={handleUpdateTask}/>
         </>
-    );
+    )
 }
