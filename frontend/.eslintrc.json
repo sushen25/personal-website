@@ -19,6 +19,6 @@
     "rules": {
         "indent": ["error", 4],
         "react/react-in-jsx-scope": "off",
-        "react/prop-types"
+        "react/prop-types": "off"
     }
 }
