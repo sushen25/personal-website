@@ -84,12 +84,8 @@ function CategoryTable ({ category, products }) {
 }
 
 export default function FilterableProductTable () {
-    const [products, setProducts] = useState(fetchData())
+    const products = data
     const [query, setQuery] = useState({ search: '', inStock: false })
-
-    function fetchData () {
-        return data
-    }
 
     function handleSearchSubmit (value) {
         setQuery(value)
