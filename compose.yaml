@@ -15,6 +15,10 @@ services:
       - 5000:5000
     depends_on:
       - db
+    volumes:
+      - ./backend/server.js:/code/server.js
+      - ./backend/db.js:/code/db.js
+      - ./backend/models:/code/models
   db:
     image: postgres:14
     environment:
