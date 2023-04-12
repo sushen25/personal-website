@@ -1,6 +1,3 @@
-
-import Game from './ticTacToe/TicTacToe'
-
 import FilterableProductTable from './apiPractice/FilterableProductTable'
 
 import './App.css'
