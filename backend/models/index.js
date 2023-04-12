@@ -3,11 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-const process = require('process');
+// const process = require('process');
 const basename = path.basename(__filename);
 // const env = process.env.NODE_ENV || 'development';
-const env = 'development';
-const config = require('../config/config.json')[env];
+// const env = 'development';
+// const config = require('../config/config.json')[env];
 const db = {};
 
 // TODO - make this work with config.json
