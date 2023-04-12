@@ -21,6 +21,7 @@ services:
       - ./backend/models:/code/models
       - ./backend/config:/code/config
       - ./backend/migrations:/code/migrations
+      - ./backend/controllers:/code/controllers
   db:
     image: postgres:14
     environment:
@@ -33,4 +34,4 @@ services:
       - db-data:/var/lib/postgresql/data
 
 volumes:
-  db-data:
+  db-data:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    

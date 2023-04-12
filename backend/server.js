@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./models');
-const { Category, Product } = require('./models');
+
+const productController = require('./controllers/category.server.controller')
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -13,17 +13,19 @@ app.get('/', (req, res) => {
 });
 
 
+app.route('/categories').get(productController.list)
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-db.sequelize.queryInterface.describeTable('Categories')
-  .then((tableDefinition) => {
-    console.log('Table definition:', tableDefinition);
-  })
-  .catch((error) => {
-    console.error('Error occurred while describing the Users table:', error);
-  });
+// db.sequelize.queryInterface.describeTable('Categories')
+//   .then((tableDefinition) => {
+//     console.log('Table definition:', tableDefinition);
+//   })
+//   .catch((error) => {
+//     console.error('Error occurred while describing the Users table:', error);
+//   });
 
 // const category = Category.findAll().then((res) => {
 //     console.log(res);
@@ -38,17 +40,5 @@ db.sequelize.queryInterface.describeTable('Categories')
 //     console.log("ERROR")
 //     console.log(err)
 // });
-
-// (async () => {
-//     try {
-
-//       const category = await Category.create({ name: 'Fruits' });
-//       const product = await Product.create({ CategoryId: category.id, name: "Apple", price: 12, stocked: true});
-    
-//       console.log('PRODUCT created:', product.toJSON());
-//     } catch (error) {
-//       console.error('Error:', error);
-//     }
-//   })();
 
 
