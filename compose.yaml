@@ -19,6 +19,8 @@ services:
       - ./backend/server.js:/code/server.js
       - ./backend/db.js:/code/db.js
       - ./backend/models:/code/models
+      - ./backend/config:/code/config
+      - ./backend/migrations:/code/migrations
   db:
     image: postgres:14
     environment:
