@@ -1,7 +1,10 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import { Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 
 import Header from './components/Header'
+
+const Blog = lazy(() => import('./components/pages/Blog'))
+const Home = lazy(() => import('./components/pages/Home'))
 
 function App () {
     return (
@@ -10,9 +13,9 @@ function App () {
                 <Header />
                 <Suspense fallback={''}>
                     <Routes>
-                        <Route path="/" element={<h1 className="text-3xl font-bold underline">Hello world!</h1>}/>
+                        <Route path="/" element={<Home />}/>
 
-                        <Route path="blog" element={<h1>Blog</h1>}/>
+                        <Route path="blog" element={<Blog />}/>
                     </Routes>
                 </Suspense>
             </Router>
