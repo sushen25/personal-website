@@ -9,6 +9,8 @@ services:
       - backend
     volumes:
       - ./frontend/src:/code/src
+    environment:
+      - DISABLE_ESLINT_PLUGIN=true
   backend:
     build: ./backend
     ports:

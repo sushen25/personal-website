@@ -13,7 +13,7 @@ exports.list = async (req, res) => {
 exports.get = async (req, res) => {
     try {
         var blogs = await Blog.findAll({ where: { id: req.params.id }})
-        return res.status(200).send({success: true, blogs: blogs});
+        return res.status(200).send({success: true, blog: blogs[0]});
     } catch (err) {
         return res.status(500).send({ success: false, error: err});
     }
