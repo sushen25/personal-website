@@ -1,16 +1,42 @@
-import React, { useState } from 'react'
-import AlertPopup from '../reusable/AlertPopup'
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import AlertPopup from '../../reusable/AlertPopup'
 import wretch from 'wretch'
 
 const CreateBlogPost = () => {
+    const { id } = useParams()
     const [title, setTitle] = useState('')
     const [text, setText] = useState('')
 
     const [showAlert, setShowAlert] = useState(false)
 
+    const setFormValues = (blog) => {
+        setTitle(blog.title)
+        setText(blog.text)
+    }
+
+    useEffect(() => {
+        const fetchBlogData = async () => {
+            wretch(`http://localhost:5000/api/v1/blogs/${id}`)
+                .get()
+                .json(data => setFormValues(data.blog))
+                .catch(err => console.log(err))
+        }
+        if (id) {
+            fetchBlogData()
+        }
+    }, [])
+
     const createBlogPost = async (title, text) => {
-        wretch('http://localhost:5000/api/v1/blogs')
-            .post({ title, text })
+        let response = null
+        const data = { title, text }
+        if (id) {
+            response = wretch(`http://localhost:5000/api/v1/blogs/${id}/`).put(data)
+        } else {
+            response = wretch('http://localhost:5000/api/v1/blogs').post(data)
+        }
+
+        response
             .res(response => console.log('response: ', response))
             .catch(err => console.log('error: ', err))
     }
@@ -53,11 +79,10 @@ const CreateBlogPost = () => {
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="submit"
                     >
-                        Add Blog
+                        { id ? 'Update Blog' : 'Add Blog' }
                     </button>
                 </div>
             </form>
-            { showAlert && <h3>Yeeet</h3>}
 
             { showAlert && <AlertPopup message="There was an error creating the post" type="error" onClose={() => setShowAlert(false)}/>}
         </div>

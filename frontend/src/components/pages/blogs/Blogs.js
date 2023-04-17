@@ -13,6 +13,14 @@ const BlogList = () => {
         fetchBlogData()
     }, [])
 
+    const deleteBlog = async (id) => {
+        wretch(`http://localhost:5000/api/v1/blogs/${id}`)
+            .delete()
+            .res(response => {
+                setBlogs(blogs.filter((blog) => blog.id !== id))
+            })
+    }
+
     return (
         <div className="max-w-2xl mx-auto mt-6">
             <a href="/blog/add">
@@ -25,11 +33,25 @@ const BlogList = () => {
             </a>
 
             {blogs.map((blog) => (
-                <div key={blog.id} className="bg-white shadow-md p-6 my-4 rounded-md">
+                <div key={blog.id} className="bg-white shadow-md p-6 my-4 rounded-md relative">
+                    <a href={`/blog/${blog.id}/update/`}>
+                        <button
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-xs py-1 px-2 rounded absolute top-2 right-2 mr-16"
+                        >
+                        Update
+                        </button>
+                    </a>
+                    <button
+                        className="bg-red-500 hover:bg-red-600 text-white font-semibold text-xs py-1 px-2 rounded absolute top-2 right-2"
+                        onClick={() => deleteBlog(blog.id)}
+                    >
+                        Delete
+                    </button>
                     <h2 className="text-2xl font-bold mb-2">{blog.title}</h2>
                     <p className="text-gray-700">{blog.text}</p>
                     <div className="mt-4 text-gray-500">{blog.createdAt}</div>
                 </div>
+
             ))}
         </div>
     )
