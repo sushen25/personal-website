@@ -1,11 +1,8 @@
-const express = require('express');
 var blogController = require('../controllers/blog.server.controller');
 
 
 
 module.exports = function(app) {
-    app.use(express.json());
-
     var baseUrl = '/api/';
     var currentVersion = 'v1/';
     var url = baseUrl+currentVersion;
