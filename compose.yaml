@@ -22,6 +22,7 @@ services:
       - ./backend/config:/code/config
       - ./backend/migrations:/code/migrations
       - ./backend/controllers:/code/controllers
+      - ./backend/routes:/code/routes
   db:
     image: postgres:14
     environment:
