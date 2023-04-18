@@ -49,8 +49,5 @@ export const AuthProvider = ({ children }) => {
         logout
     }
 
-    console.log(authenticated)
-    console.log(username)
-
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
