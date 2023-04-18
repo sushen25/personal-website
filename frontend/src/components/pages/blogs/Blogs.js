@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import wretch from 'wretch'
+import { useAuth } from '../../context/AuthContext'
 
 const BlogList = () => {
     const [blogs, setBlogs] = useState([])
+    const auth = useAuth()
 
     useEffect(() => {
         const fetchBlogData = async () => {
@@ -23,6 +25,7 @@ const BlogList = () => {
 
     return (
         <div className="max-w-2xl mx-auto mt-6">
+            { auth.authenticated ? 'Yes' : 'No'}
             <a href="/blog/add">
                 <button
 
