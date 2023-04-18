@@ -6,6 +6,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const blogRoutes = require('./routes/blog.server.routes')
+const { User } = require('./models')
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,18 +24,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Dummy user data (replace this with your own user storage solution)
-const users = [
-    {
-      id: 1,
-      username: 'user',
-      password: '$2a$10$WAxx9Y7eNkI..f.7HV2FZO0guEmKAOAMhZaL8xRHLD.89iaQRECRy' // bcrypt hash for 'password'
-    }
-  ];
-  
 // Passport configuration
 passport.use(new LocalStrategy(
-    function(username, password, done) {
+    async function(username, password, done) {
+        const users = await User.findAll()
+        console.log(users)
         const user = users.find(user => user.username === username);
 
         if (!user) {
@@ -52,12 +46,13 @@ passport.use(new LocalStrategy(
         });
     }
 ));
-  
+
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
 
-passport.deserializeUser((id, done) => {
+passport.deserializeUser( async (id, done) => {
+    const users = await User.findAll()
     const user = users.find(user => user.id === id);
     done(null, user);
 });
