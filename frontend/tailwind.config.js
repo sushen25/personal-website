@@ -4,14 +4,14 @@ module.exports = {
     theme: {
         extend: {
             backgroundColor: {
-                primary: '#F9F7F7',
-                secondary: '#DBE2EF'
+                primary: '#062F4F',
+                secondary: '#B82601'
             // Add other colors as needed
             },
             textColor: {
                 primary: '#112D4E',
                 secondary: '#3F72AF',
-                highlight: '#c251ab'
+                highlight: '#813772'
             // Add other colors as needed
             }
         }

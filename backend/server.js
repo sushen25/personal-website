@@ -28,7 +28,6 @@ app.use(passport.session());
 passport.use(new LocalStrategy(
     async function(username, password, done) {
         const users = await User.findAll()
-        console.log(users)
         const user = users.find(user => user.username === username);
 
         if (!user) {
@@ -73,7 +72,6 @@ app.post('/api/v1/login/', (req, res) => {
       if (!user) {
         return res.status(401).json({ authenticated: false, message: info.message });
       }
-  
       req.logIn(user, (err) => {
         if (err) {
           return res.status(500).json({ error: err });
