@@ -7,7 +7,7 @@ const Home = () => {
             <div className="bg-primary text-primary">
                 <div className="container mx-auto px-4 py-10">
                     <div className='bg-white px-10 py-16'>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex items-center">
+                        <div className="grid grid-cols-1 py-10 md:grid-cols-2 gap-8 flex items-center">
                             <div>
                                 <h1 className="text-2xl md:text-4xl font-bold mb-6">
                                     Hey, I&apos;m
@@ -35,7 +35,7 @@ const Home = () => {
                                 <img
                                     src={profilePic}
                                     alt="Photo"
-                                    className=" mx-auto w-1/2 object-cover"
+                                    className="mx-auto w-1/2 object-cover"
                                 />
                             </div>
 
@@ -46,8 +46,6 @@ const Home = () => {
 
                 </div>
             </div>
-
-            {/* <FeaturedProjects /> */}
         </>
     )
 }
