@@ -19,13 +19,13 @@ const Home = () => {
                                 <div className="flex mt-10">
                                     <a
                                         href="/contact"
-                                        className="bg-highlight border-2 border-highlight text-primary py-2 px-4 rounded-md font-semibold hover:bg-opacity-40 transition duration-200"
+                                        className="-border-2 border-highlight text-primary py-2 px-4 rounded-md font-semibold hover:bg-opacity-40 transition duration-200"
                                     >
                                         Contact
                                     </a>
                                     <a
                                         href="/blog"
-                                        className="bg-highlight border-2 border-secondary text-primary py-2 px-7 ml-4 rounded-md font-semibold hover:bg-highlight hover:text-primary transition duration-200"
+                                        className="border-2 border-secondary text-primary py-2 px-7 ml-4 rounded-md font-semibold hover:bg-primary hover:text-primary transition duration-200"
                                     >
                                         Blog
                                     </a>
