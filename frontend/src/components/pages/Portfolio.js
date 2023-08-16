@@ -46,8 +46,8 @@ const TiledImageGallery = () => {
 const Portfolio = () => {
     const [showAllEducationItems, setShowAllEducationItems] = useState(false)
     let educationItems = [
-        { id: 1, dateRange: '2017-2022', title: 'Bachelor of Information Technology', subTitle: 'Monash University' },
-        { id: 2, dateRange: '2017-2022', title: 'Bachelor of Commerce', subTitle: 'Monash University' },
+        { id: 1, dateRange: '2018-2022', title: 'Bachelor of Information Technology', subTitle: 'Monash University' },
+        { id: 2, dateRange: '2018-2022', title: 'Bachelor of Commerce', subTitle: 'Monash University' },
         { id: 3, dateRange: '2016-2017', title: 'Victorian Certificate of Education', subTitle: 'John Monash Science School' }
     ]
     if (!showAllEducationItems) {

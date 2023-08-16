@@ -14,28 +14,32 @@ const Home = () => {
                                     <span className="text-highlight"> Sushen</span> - A Software Engineer from Melbourne.
                                 </h1>
                                 <p className="text-md md:text-xl">
-                                    Explore my latest projects, learn more about me, and get in touch.
+                                    I have a passion for building robust, scalable and reliable software systems.
+                                    Explore my latest projects, learn more about me and get in touch.
+                                </p>
+                                <p className="text-md md:text-xl">
+
                                 </p>
                                 <div className="flex mt-10">
                                     <a
-                                        href="/contact"
-                                        className="-border-2 border-highlight text-primary py-2 px-4 rounded-md font-semibold hover:bg-opacity-40 transition duration-200"
+                                        href="/portfolio"
+                                        className="border-2 border-highlight text-primary py-2 px-4 rounded-md font-semibold hover:bg-opacity-40 transition duration-200"
                                     >
-                                        Contact
+                                        Portfolio
                                     </a>
                                     <a
                                         href="/blog"
-                                        className="border-2 border-secondary text-primary py-2 px-7 ml-4 rounded-md font-semibold hover:bg-primary hover:text-primary transition duration-200"
+                                        className="border-2 border-secondary text-primary py-2 px-7 ml-4 rounded-md font-semibold hover:bg-highlight hover:text-white transition duration-200"
                                     >
                                         Blog
                                     </a>
                                 </div>
                             </div>
-                            <div>
+                            <div className='justify-self-end'>
                                 <img
                                     src={profilePic}
                                     alt="Photo"
-                                    className="mx-auto w-1/2 object-cover"
+                                    className="ml-auto w-3/4 object-cover"
                                 />
                             </div>
 

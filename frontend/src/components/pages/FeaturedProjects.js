@@ -1,5 +1,5 @@
 import cityScape from '../../images/icmp.jpg'
-import rdms from '../../images/rdms.jpeg'
+import rdms from '../../images/rdms_login.png'
 
 const FeaturedProjects = () => {
     const projects = [
@@ -11,7 +11,7 @@ const FeaturedProjects = () => {
 
         <div>
             <h2 className="text-3xl font-bold mb-12">Featured Work</h2>
-            <div className="grid grid-cols-2 gap-4 mx-14">
+            <div className="grid grid-cols-2 gap-4">
                 {projects.map((project) => (
                     <div
                         key={project.id}
