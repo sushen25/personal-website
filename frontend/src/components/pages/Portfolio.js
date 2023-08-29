@@ -24,7 +24,6 @@ const TiledImageGallery = () => {
     const numImages = imageUrls.length
     const totalImageWidth = imageSize + spacing
     const availableWidth = containerWidth - totalImageWidth
-    const totalSpacing = (numImages - 1) * spacing
     const adjustedSpacing = availableWidth / numImages
 
     return (
