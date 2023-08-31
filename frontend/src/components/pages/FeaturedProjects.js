@@ -13,9 +13,9 @@ const FeaturedProjects = () => {
 
     const projects = [
         { id: 1, title: 'ICMP', fullTitle: 'Intelligent Congestion Management System (ICMP)', image: cityScape, content: IcmpProjectContent },
-        { id: 2, title: 'RDMS', fullTitle: 'Resource Data Managagement System (RDMS)', image: rdms, content: DermsProjectContent },
-        { id: 3, title: 'iOS CaloTrak', fullTitle: 'iOS Calorie Tracking App', image: rdms },
-        { id: 4, title: 'Arduino Basketball', fullTitle: 'Arduino Basketball', image: rdms }
+        { id: 2, title: 'RDMS', fullTitle: 'Resource Data Managagement System (RDMS)', image: rdms, content: DermsProjectContent }
+        // { id: 3, title: 'iOS CaloTrak', fullTitle: 'iOS Calorie Tracking App', image: rdms },
+        // { id: 4, title: 'Arduino Basketball', fullTitle: 'Arduino Basketball', image: rdms }
     ]
 
     function openModal (project) {
