@@ -1,4 +1,4 @@
-import Badge from '../reusable/Badge.js'
+import Badge from '../../reusable/Badge.js'
 
 export default (
     <div className='max-w-4xl mx-auto p-4'>
