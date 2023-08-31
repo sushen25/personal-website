@@ -9,6 +9,7 @@ services:
       - backend
     volumes:
       - ./frontend/src:/code/src
+      - ./frontend/tailwind.config.js:/code/tailwind.config.js
     environment:
       - DISABLE_ESLINT_PLUGIN=true
   backend:

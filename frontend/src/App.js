@@ -9,6 +9,7 @@ const Blog = lazy(() => import('./components/pages/blogs/Blogs'))
 const BlogForm = lazy(() => import('./components/pages/blogs/BlogForm'))
 const BlogDetail = lazy(() => import('./components/pages/blogs/BlogDetail'))
 const Home = lazy(() => import('./components/pages/Home'))
+const Portfolio = lazy(() => import('./components/pages/Portfolio'))
 
 function App () {
     return (
@@ -24,6 +25,7 @@ function App () {
                             <Route path="blog/:id" element={<BlogDetail />}/>
                             <Route path="blog/:id/update" element={<BlogForm />}/>
                             <Route path="blog/add" element={<BlogForm />}/>
+                            <Route path="/portfolio" element={<Portfolio />}/>
                         </Routes>
                     </Suspense>
                 </Router>
