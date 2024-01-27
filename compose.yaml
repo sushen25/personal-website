@@ -1,12 +1,12 @@
 services:
   frontend:
     build:
-      context: frontend
+      context: .
       target: development
     ports:
       - 3000:3000
     volumes:
-      - ./frontend/src:/code/src
-      - ./frontend/tailwind.config.js:/code/tailwind.config.js
+      - ./src:/code/src
+      - ./tailwind.config.js:/code/tailwind.config.js
     environment:
       - DISABLE_ESLINT_PLUGIN=true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
