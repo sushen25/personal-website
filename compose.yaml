@@ -5,37 +5,8 @@ services:
       target: development
     ports:
       - 3000:3000
-    depends_on:
-      - backend
     volumes:
       - ./frontend/src:/code/src
       - ./frontend/tailwind.config.js:/code/tailwind.config.js
     environment:
-      - DISABLE_ESLINT_PLUGIN=true
-  backend:
-    build: ./backend
-    ports:
-      - 5000:5000
-    depends_on:
-      - db
-    volumes:
-      - ./backend/server.js:/code/server.js
-      - ./backend/db.js:/code/db.js
-      - ./backend/models:/code/models
-      - ./backend/config:/code/config
-      - ./backend/migrations:/code/migrations
-      - ./backend/controllers:/code/controllers
-      - ./backend/routes:/code/routes
-  db:
-    image: postgres:14
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: website
-    ports:
-      - '5432:5432'
-    volumes:
-      - db-data:/var/lib/postgresql/data
-
-volumes:
-  db-data:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+      - DISABLE_ESLINT_PLUGIN=true                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
