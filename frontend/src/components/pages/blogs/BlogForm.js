@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import AlertPopup from '../../reusable/AlertPopup'
-import wretch from 'wretch'
+import { createBlog } from '../../api/blogApi'
 
 const CreateBlogPost = () => {
     const { id } = useParams()
@@ -15,34 +15,13 @@ const CreateBlogPost = () => {
         setText(blog.text)
     }
 
-    useEffect(() => {
-        const fetchBlogData = async () => {
-            wretch(`http://localhost:5000/api/v1/blogs/${id}`)
-                .get()
-                .json(data => setFormValues(data.blog))
-                .catch(err => console.log(err))
-        }
-        if (id) {
-            fetchBlogData()
-        }
-    }, [])
-
-    const createBlogPost = async (title, text) => {
-        let response = null
-        const data = { title, text }
-        if (id) {
-            response = wretch(`http://localhost:5000/api/v1/blogs/${id}/`).put(data)
-        } else {
-            response = wretch('http://localhost:5000/api/v1/blogs').post(data)
-        }
-
-        response
-            .res(response => console.log('response: ', response))
-            .catch(err => console.log('error: ', err))
+    const createBlogPost = async (title, content) => {
+        createBlog(title, content)
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
+
         // Handle form submission logic here
         createBlogPost(title, text)
     }

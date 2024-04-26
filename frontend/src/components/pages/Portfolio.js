@@ -98,13 +98,13 @@ const Portfolio = () => {
                                         </tbody>
                                     </table>
                                     <button className="bg-highlight ml-3 text-white font-bold py-1 px-2 rounded" onClick={() => setShowAllEducationItems(!showAllEducationItems)}>
-                                        {showAllEducationItems ? 'See Less' : 'See More' }
+                                        {showAllEducationItems ? 'See Less' : 'See More'}
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <hr className='my-10'/>
+                        <hr className='my-10' />
 
                         {/* Experience */}
                         <div className="grid grid-cols-5 gap-4">
@@ -126,7 +126,7 @@ const Portfolio = () => {
                                         </tbody>
                                     </table>
                                     <button className="bg-highlight ml-3 text-white font-bold py-1 px-2 rounded" onClick={() => setShowAllExperienceItems(!showAllExperienceItems)}>
-                                        {showAllExperienceItems ? 'See Less' : 'See More' }
+                                        {showAllExperienceItems ? 'See Less' : 'See More'}
                                     </button>
                                 </div>
                             </div>
@@ -138,7 +138,7 @@ const Portfolio = () => {
                             </div>
                         </div>
 
-                        <hr className='my-10'/>
+                        <hr className='my-10' />
 
                         {/* Technical Skills */}
                         <h3 className="text-xl md:text-md underline mb-5">Technical Skills</h3>
@@ -152,7 +152,7 @@ const Portfolio = () => {
                                     <li>Vue JS</li>
                                 </ul>
 
-                                <div className='my-4'/>
+                                <div className='my-4' />
 
                                 <strong>Backend Frameworks</strong>
                                 <ul className='ml-4 list-disc'>
@@ -160,7 +160,7 @@ const Portfolio = () => {
                                     <li>Node JS</li>
                                 </ul>
 
-                                <div className='my-4'/>
+                                <div className='my-4' />
 
                                 <strong>Databases</strong>
                                 <ul className='ml-4 list-disc'>
@@ -169,7 +169,7 @@ const Portfolio = () => {
                                     <li>Neo4J</li>
                                 </ul>
 
-                                <div className='my-4'/>
+                                <div className='my-4' />
 
                                 <strong>Cloud Infrastructure</strong>
                                 <ul className='ml-4 list-disc'>
@@ -177,7 +177,7 @@ const Portfolio = () => {
                                     <li>Google Firebase</li>
                                 </ul>
 
-                                <div className='my-4'/>
+                                <div className='my-4' />
 
                                 <strong>Other</strong>
                                 <ul className='ml-4 list-disc'>
@@ -185,7 +185,7 @@ const Portfolio = () => {
                                     <li>iOS (XCode)</li>
                                 </ul>
 
-                                <div className='my-4'/>
+                                <div className='my-4' />
                             </div>
                             <div className="col-span-2">
                                 <TiledImageGallery />
@@ -194,7 +194,7 @@ const Portfolio = () => {
 
                         {/* TODO - Key Strengths */}
 
-                        <hr className='my-10'/>
+                        <hr className='my-10' />
 
                         {/* Referees */}
                         <h3 className="text-xl md:text-md underline mb-5">Referees</h3>

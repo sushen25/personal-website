@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import wretch from 'wretch'
+import { getAllBlogs } from '../../api/blogApi'
 import { useAuth } from '../../context/AuthContext'
 
 const convertIsoToFormattedDate = (isoTimestamp) => {
@@ -23,12 +23,10 @@ const BlogList = () => {
     const auth = useAuth()
 
     useEffect(() => {
-        const fetchBlogData = async () => {
-            wretch('http://localhost:5000/api/v1/blogs/')
-                .get()
-                .json(data => setBlogs(data.blogs))
-        }
-        fetchBlogData()
+        getAllBlogs()
+            .json((json) => {
+                console.log(json)
+            })
     }, [])
 
     const deleteBlog = async (id) => {
