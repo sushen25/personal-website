@@ -2,11 +2,17 @@ export default function Education() {
     // Replace with your actual education from LinkedIn
     const education = [
         {
-            degree: "Bachelor's Degree",
-            school: "University Name",
-            years: "2017 - 2021",
+            degree: "Bachelor's of Computer Science",
+            school: "Monash University",
+            years: "2018 - 2021",
             description: "Graduated with honors. Relevant coursework included Data Structures, Algorithms, Web Development, and Database Systems."
         },
+        {
+            degree: "Bachelor's of Commerce",
+            school: "Monash University",
+            years: "2018 - 2021",
+            description: "Relevant coursework included Finance, Economics, Business Law and Marketing."
+        }
         // Add more education entries as needed
     ];
 

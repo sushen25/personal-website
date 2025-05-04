@@ -7,22 +7,24 @@ export default function About() {
                 </h2>
 
                 <div className="max-w-3xl mx-auto">
+
                     <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                        {/* Replace with your LinkedIn summary */}
-                        I'm a passionate software engineer focused on building robust and scalable applications.
-                        With expertise in both frontend and backend development, I enjoy creating elegant solutions
-                        to complex problems.
+                        Hey I'm Sushen,
+                        A Software Engineer based in Melbourne, Australia.
                     </p>
 
                     <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                        My technical journey has equipped me with a diverse skill set, including modern JavaScript frameworks,
-                        cloud technologies, and database systems. I'm dedicated to writing clean, maintainable code and
-                        continuously expanding my knowledge to stay at the forefront of technology.
+                        I'm currently working at TeamAssurance as a Full Stack Developer, creating software for global manufacturing customers.
+                    </p>
+
+                    <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                        Working with React, Node, AWS and MySQL.
+                        Working at a startup requires me to operate across the full stack, contributing to everything from designing intuitive user interfaces to configuring infrastructure within the AWS ecosystem.
                     </p>
 
                     <p className="text-lg text-gray-700 dark:text-gray-300">
-                        When I'm not coding, you can find me exploring new technologies, contributing to open-source projects,
-                        or sharing my knowledge through technical writing and mentoring junior developers.
+                        When I'm not coding, you can find me exploring new technologies, working on side projects, expanding my smart home setup,
+                        or sharing my knowledge through technical writing.
                     </p>
                 </div>
             </div>
