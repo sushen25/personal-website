@@ -6,12 +6,11 @@ export default function Projects() {
     // Replace with your actual projects data
     const projects = [
         {
-            title: "Project One",
-            description: "A web application built with React and Node.js that allows users to track their daily habits and progress over time.",
-            imageSrc: "/project1.jpg", // Add actual image later
-            tags: ["React", "Node.js", "MongoDB", "Express"],
-            projectUrl: "https://project1.example.com",
-            githubUrl: "https://github.com/yourusername/project1"
+            title: "Hacker News Chat",
+            description: "An LLM RAG application that allows you to chat with Hacker News articles.",
+            imageSrc: "/hacker-news-chat-photo.png",
+            tags: ["AI", "LLM", "RAG", "Python", "Flask", "LangChain", "OpenAI", "Serverless"],
+            githubUrl: "https://github.com/sushen25/hacker-news-chat-ai"
         },
         {
             title: "Project Two",
