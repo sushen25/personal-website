@@ -11,7 +11,8 @@ export default function Experience() {
                 "Collaborate with global clients including CSL, Suntory, and Pact",
                 "Lead cross-functional development across UI, backend, and DevOps domains",
                 "Build application integrations with third party APIs and Webhooks"
-            ]
+            ],
+            skills: ["React", "TypeScript", "AWS", "Node.js", "AWS", "Application Integrations", "Webhooks"]
         },
         {
             title: "Software Engineer",
@@ -22,7 +23,8 @@ export default function Experience() {
                 "Led technical mentorship program for interns and junior developers",
                 "Ensured high-quality project delivery within strict timelines and requirements",
                 "Implemented agile development methodologies to optimize team productivity"
-            ]
+            ],
+            skills: ["Django", "Python", "VueJS", "Full Stack Development", "Mentorship"]
         },
     ];
 
@@ -47,11 +49,23 @@ export default function Experience() {
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white leading-tight mb-1">{exp.title}</h3>
                                 <p className="text-blue-600 dark:text-blue-400 font-medium text-[15px] mb-0.5">{exp.company}</p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{exp.duration}</p>
-                                <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1 text-[15px] pl-1">
+                                {/* Skills chips */}
+                                <div className="flex flex-wrap gap-2 mt-3 mb-3">
+                                    {exp.skills.map((skill, idx) => (
+                                        <span
+                                            key={idx}
+                                            className="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full"
+                                        >
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                                <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1 text-[15px] pl-1 mb-3">
                                     {exp.description.map((point, idx) => (
                                         <li key={idx}>{point}</li>
                                     ))}
                                 </ul>
+
                             </div>
                         ))}
                     </div>
