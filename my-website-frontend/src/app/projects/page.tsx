@@ -47,7 +47,6 @@ export default function Projects() {
                                 description={project.description}
                                 imageSrc={project.imageSrc}
                                 tags={project.tags}
-                                projectUrl={project.projectUrl}
                                 githubUrl={project.githubUrl}
                             />
                         ))}

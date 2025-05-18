@@ -11,12 +11,12 @@ export default function About() {
                 <div className="max-w-3xl mx-auto">
 
                     <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                        Hey I'm Sushen,
+                        Hey I&apos;m Sushen,
                         A Software Engineer based in Melbourne, Australia.
                     </p>
 
                     <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                        I'm currently working at TeamAssurance as a Full Stack Developer, creating software for global manufacturing customers.
+                        I&apos;m currently working at TeamAssurance as a Full Stack Developer, creating software for global manufacturing customers.
                     </p>
 
                     <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
@@ -25,13 +25,13 @@ export default function About() {
                     </p>
 
                     <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                        When I'm not coding, you can find me reading the latest non fiction or fantasy books, expanding my smart home setup,
+                        When I&apos;m not coding, you can find me reading the latest non fiction or fantasy books, expanding my smart home setup,
                         or playing my favourite sports in badminton, pickleball or tennis.
                     </p>
 
                     <p className="text-lg text-gray-700 dark:text-gray-300">
-                        You can check out some of the projects I've worked on in my spare time on the <Link href="/projects" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">projects page</Link>.
-                        I'd love to hear your thoughts!
+                        You can check out some of the projects I&apos;ve worked on in my spare time on the <Link href="/projects" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">projects page</Link>.
+                        I&apos;d love to hear your thoughts!
                     </p>
                 </div>
             </div>
