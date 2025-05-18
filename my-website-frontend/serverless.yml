@@ -1,0 +1,16 @@
+service: my-website-frontend
+
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: my-website-frontend-2025
+    distributionFolder: out
+    indexDocument: index.html
+    errorDocument: 404.html
+
+provider:
+  name: aws
+  region: ap-southeast-2
+  profile: my-profile
