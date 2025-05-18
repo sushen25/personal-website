@@ -30,7 +30,7 @@ export default function About() {
                     </p>
 
                     <p className="text-lg text-gray-700 dark:text-gray-300">
-                        You can check out some of the projects I've worked on in my spare time, on the <Link href="/projects" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">projects page</Link>.
+                        You can check out some of the projects I've worked on in my spare time on the <Link href="/projects" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">projects page</Link>.
                         I'd love to hear your thoughts!
                     </p>
                 </div>

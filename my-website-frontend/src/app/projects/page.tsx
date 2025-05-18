@@ -6,6 +6,13 @@ export default function Projects() {
     // Replace with your actual projects data
     const projects = [
         {
+            title: "My Checklist Generator",
+            description: "A checklist generator that allows you to create any checklists in a pinch, using AI Agents.",
+            imageSrc: "/checklist-generator-generator-example.png",
+            tags: ["AI Agents", "CrewAI", "Streamlit", "Python", "OpenAI", "LangChain"],
+            githubUrl: "https://github.com/sushen25/my-checklist-generator-ai"
+        },
+        {
             title: "Hacker News Chat",
             description: "An LLM RAG application that allows you to chat with Hacker News articles.",
             imageSrc: "/hacker-news-chat-photo.png",
@@ -13,20 +20,11 @@ export default function Projects() {
             githubUrl: "https://github.com/sushen25/hacker-news-chat-ai"
         },
         {
-            title: "Project Two",
-            description: "An e-commerce platform with secure payment processing, product catalog, and user authentication.",
-            imageSrc: "/project2.jpg", // Add actual image later
-            tags: ["Next.js", "Stripe", "Firebase", "Tailwind CSS"],
-            projectUrl: "https://project2.example.com",
-            githubUrl: "https://github.com/yourusername/project2"
-        },
-        {
-            title: "Project Three",
-            description: "A mobile-responsive dashboard that visualizes data from multiple sources with real-time updates.",
-            imageSrc: "/project3.jpg", // Add actual image later
-            tags: ["TypeScript", "React", "D3.js", "GraphQL"],
-            projectUrl: "https://project3.example.com",
-            githubUrl: "https://github.com/yourusername/project3"
+            title: "Calo Trak",
+            description: "An iOS app that allows you to track your calories and macros, with external food API integration.",
+            imageSrc: "/test.png",
+            tags: ["Swift", "SwiftUI", "XCode", "CoreData", "Firebase", "Mobile Development"],
+            githubUrl: "https://github.com/sushen25/calorie-tracker"
         },
         // Add more projects as needed
     ];
