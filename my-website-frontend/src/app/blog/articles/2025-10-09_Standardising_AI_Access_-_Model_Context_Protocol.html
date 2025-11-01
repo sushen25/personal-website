@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Standardising AI Access — Model Context Protocol (MCP)</title>
+  <style>
+    * {
+      font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 50px;
+      margin-bottom: 17px;
+      color: #333;
+    }
+
+    h2 {
+      font-size: 24px;
+      line-height: 1.6;
+      margin: 30px 0 0 0;
+      margin-bottom: 18px;
+      margin-top: 33px;
+      color: #333;
+    }
+
+    h3 {
+      font-size: 30px;
+      margin: 10px 0 20px 0;
+      color: #333;
+    }
+
+    header {
+      width: 640px;
+      margin: auto;
+    }
+
+    section {
+      width: 640px;
+      margin: auto;
+    }
+
+    section p {
+      margin-bottom: 27px;
+      font-size: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    section img {
+      max-width: 640px;
+    }
+
+    footer {
+      padding: 0 20px;
+      margin: 50px 0;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .aspectRatioPlaceholder {
+      max-width: auto !important;
+      max-height: auto !important;
+    }
+
+    .aspectRatioPlaceholder-fill {
+      padding-bottom: 0 !important;
+    }
+
+    header,
+    section[data-field=subtitle],
+    section[data-field=description] {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <article class="h-entry">
+    <header>
+      <h1 class="p-name">Standardising AI Access — Model Context Protocol (MCP)</h1>
+    </header>
+    <section data-field="subtitle" class="p-summary">
+      Have you ever wished your AI assistant could do more?
+    </section>
+    <section data-field="body" class="e-content">
+      <section name="298e" class="section section--body section--first section--last">
+        <div class="section-divider">
+          <hr class="section-divider">
+        </div>
+        <div class="section-content">
+          <div class="section-inner sectionLayout--insetColumn">
+            <h3 name="bc4b" id="bc4b" class="graf graf--h3 graf--leading graf--title">Standardising AI Access — Model
+              Context Protocol (MCP)</h3>
+            <p name="22a6" id="22a6" class="graf graf--p graf-after--h3">Have you ever wished your AI assistant could do
+              more?</p>
+            <p name="bb07" id="bb07" class="graf graf--p graf-after--p">Did you ever want to ask ChatGPT to handle your
+              emails? Schedule meetings? Scan through pdfs and answer questions?</p>
+            <p name="c560" id="c560" class="graf graf--p graf-after--p"><strong
+                class="markup--strong markup--p-strong">Information Silos</strong></p>
+            <p name="e422" id="e422" class="graf graf--p graf-after--p">Currently, AI agents reside within information
+              silos; they’re like geniuses that are stuck in a library with no access to the outside world.</p>
+            <p name="59a6" id="59a6" class="graf graf--p graf-after--p">Their knowledge only consists of whatever they
+              have been given during the training process and nothing more. Giving it data will enable the agent to
+              answer questions and take actions based on its now increased set of information.</p>
+            <p name="010f" id="010f" class="graf graf--p graf-after--p">Say you wanted your AI agent to schedule a
+              meeting from an email in an empty slot in your calendar. The key factor in achieving this is to provide
+              the Agent access to the email and calendar data, and the ability to schedule a meeting. This information
+              will now allow the agent to schedule the meeting at the correct time with the right person.</p>
+            <p name="1272" id="1272" class="graf graf--p graf-after--p">So how do we give an agent like ChatGPT access
+              to the data?</p>
+            <p name="1217" id="1217" class="graf graf--p graf-after--p">Let’s look at how developers typically handle
+              this.</p>
+            <p name="23ba" id="23ba" class="graf graf--p graf-after--p"><strong
+                class="markup--strong markup--p-strong">The “Old” Way</strong></p>
+            <p name="6925" id="6925" class="graf graf--p graf-after--p">The following is some sample Python code to make
+              the request to schedule a meeting from an email to the OpenAI API.</p>
+            <pre data-code-block-mode="2" spellcheck="false" data-code-block-lang="python" name="6917" id="6917"
+              class="graf graf--pre graf-after--p graf--preV2"><span class="pre--content">agent = OpenAI()<br /><br /><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_emails</span>():<br />  <span class="hljs-comment"># Logic to fetch the contents of emails</span><br /><br /><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_calendar_info</span>():<br />  <span class="hljs-comment"># Logic to fetch calendar info</span><br /><br /><span class="hljs-keyword">def</span> <span class="hljs-title function_">schedule_meeting</span>():<br />  <span class="hljs-comment"># A tool to enable the agent to schedule a meeting</span><br /><br />prompt = <span class="hljs-string">&quot;Please look at my latest email and schedule a meeting in an <br />empty slot in my calendar.&quot;</span><br /><br />response = agent.chat.completions.create(<br />    model=<span class="hljs-string">&quot;gpt-4o&quot;</span>,<br />    messages=[<br />        {<span class="hljs-string">&quot;role&quot;</span>: <span class="hljs-string">&quot;user&quot;</span>, <span class="hljs-string">&quot;content&quot;</span>: prompt},<br />    ],<br />    <span class="hljs-comment"># Adding tools gives the agent the ability fetch the necessary info</span><br />    <span class="hljs-comment"># And the ability to schedule meetings if needed</span><br />    tools=[<br />      { <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;function&quot;</span>, <span class="hljs-string">&quot;function&quot;</span>: { <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;get_emails&quot;</span> } },<br />      { <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;function&quot;</span>, <span class="hljs-string">&quot;function&quot;</span>: { <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;get_calendar_info&quot;</span> } },<br />      { <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;function&quot;</span>, <span class="hljs-string">&quot;function&quot;</span>: { <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;schedule_meeting&quot;</span> } }<br />    ]<br />)<br /><br /><span class="hljs-built_in">print</span>(response.choices[<span class="hljs-number">0</span>].message[<span class="hljs-string">&quot;content&quot;</span>])</span></pre>
+            <p name="eec1" id="eec1" class="graf graf--p graf-after--pre">In the snippet, we define 3 functions. Two
+              functions to fetch information and one to provide the agent with the ability to take an action.</p>
+            <p name="e407" id="e407" class="graf graf--p graf-after--p">The problem with this method is the inability to
+              use the tools we defined above in another implementation. Say we wanted to switch to using the Claude API
+              instead, and we want to implement it in Typescript. Now we have to <strong
+                class="markup--strong markup--p-strong">redo the entire implementation</strong>, including the 3 tools
+              we defined earlier.</p>
+            <pre data-code-block-mode="2" spellcheck="false" data-code-block-lang="typescript" name="9e21" id="9e21"
+              class="graf graf--pre graf-after--p graf--preV2"><span class="pre--content"><span class="hljs-keyword">const</span> client = <span class="hljs-title class_">ClaudeAI</span>();<br /><br /><span class="hljs-keyword">function</span> <span class="hljs-title function_">get_emails</span>(<span class="hljs-params"></span>) {<br />  <span class="hljs-comment">// Reimplementation in typescript</span><br />}<br />  <br /><span class="hljs-keyword">function</span> <span class="hljs-title function_">get_calendar_info</span>(<span class="hljs-params"></span>) {<br />  <span class="hljs-comment">// Reimplementation in typescript</span><br />}<br /><br /><span class="hljs-keyword">function</span> <span class="hljs-title function_">schedule_meeting</span>(<span class="hljs-params"></span>) {<br />  <span class="hljs-comment">// Reimplementation in typescript</span><br />}<br /><br /><span class="hljs-keyword">const</span> prompt = <span class="hljs-string">`Please look at my latest email and schedule a meeting in an <br />empty slot in my calendar.`</span><br /><br /><span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> client.<span class="hljs-property">messages</span>.<span class="hljs-title function_">create</span>({<br />  <span class="hljs-attr">model</span>: <span class="hljs-string">&quot;claude-3-5-sonnet-20240620&quot;</span>,<br />  <span class="hljs-attr">messages</span>: {<span class="hljs-attr">role</span>: <span class="hljs-string">&quot;user&quot;</span>, <span class="hljs-attr">content</span>: prompt}<br />  <span class="hljs-attr">tools</span>: [<br />    { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;get_emails&quot;</span> },<br />    { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;get_calendar_info&quot;</span> },<br />    { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;schedule_meeting&quot;</span> }<br />  ]<br />)<br /><br /><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(response)</span></pre>
+            <p name="f4db" id="f4db" class="graf graf--p graf-after--pre"><strong
+                class="markup--strong markup--p-strong">M X N Problem</strong></p>
+            <p name="37a3" id="37a3" class="graf graf--p graf-after--p">This issue of having to implement each
+              connection for every AI agent is referred to as the M x N problem. For every AI Agent, M, and every
+              connection, N, a total of M multiplied by N connections need to be built.</p>
+            <figure name="b05e" id="b05e" class="graf graf--figure graf-after--p"><img class="graf-image"
+                data-image-id="1*MTVklZGLrHUcveTfyyCKyQ.png" data-width="1690" data-height="944" data-is-featured="true"
+                src="https://cdn-images-1.medium.com/max/800/1*MTVklZGLrHUcveTfyyCKyQ.png">
+              <figcaption class="imageCaption">2 Agents x 3 connections = 6 Custom Integrations</figcaption>
+            </figure>
+            <p name="a6b3" id="a6b3" class="graf graf--p graf-after--figure">We can see that having to build each
+              connection for every new agent we want to use can be quite onerous.</p>
+            <p name="4ea8" id="4ea8" class="graf graf--p graf-after--p"><strong
+                class="markup--strong markup--p-strong">Model Context Protocol (MCP)</strong></p>
+            <p name="48a1" id="48a1" class="graf graf--p graf-after--p">Model Context Protocol is a framework introduced
+              by <em class="markup--em markup--p-em">Anthropic</em> that aims to solve this problem of having to create
+              custom integrations. In this framework you only have to define the tools you want to make available to
+              your agent <strong class="markup--strong markup--p-strong">once,</strong> and expose to them agent
+              (client).</p>
+            <p name="9aae" id="9aae" class="graf graf--p graf-after--p">It’s easiest to dive into an example, we will
+              first create an “MCP Server”.</p>
+            <pre data-code-block-mode="2" spellcheck="false" data-code-block-lang="python" name="d4f8" id="d4f8"
+              class="graf graf--pre graf-after--p graf--preV2"><span class="pre--content"><span class="hljs-keyword">from</span> mcp.server.fastmcp <span class="hljs-keyword">import</span> FastMCP<br /><br /><span class="hljs-comment"># Create MCP server instance</span><br />mcp = FastMCP(<span class="hljs-string">&quot;calendar_email_mcp&quot;</span>)<br /><br /><span class="hljs-comment"># Register tools (capabilities)</span><br /><span class="hljs-meta">@mcp.tool()</span><br /><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_emails_tool</span>() -&gt; <span class="hljs-built_in">dict</span>:<br />    <span class="hljs-string">&quot;&quot;&quot;Fetch emails and their contents.&quot;&quot;&quot;</span><br />    <span class="hljs-keyword">return</span> get_emails()<br /><br /><span class="hljs-meta">@mcp.tool()</span><br /><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_calendar_info_tool</span>() -&gt; <span class="hljs-built_in">dict</span>:<br />    <span class="hljs-string">&quot;&quot;&quot;Get the user&#x27;s calendar information.&quot;&quot;&quot;</span><br />    <span class="hljs-keyword">return</span> get_calendar_info()<br /><br /><span class="hljs-meta">@mcp.tool()</span><br /><span class="hljs-keyword">def</span> <span class="hljs-title function_">schedule_meeting_tool</span>(<span class="hljs-params">time: <span class="hljs-built_in">str</span>, with_person: <span class="hljs-built_in">str</span></span>) -&gt; <span class="hljs-built_in">dict</span>:<br />    <span class="hljs-string">&quot;&quot;&quot;Schedule a meeting with the given person at a specific time.&quot;&quot;&quot;</span><br />    <span class="hljs-keyword">return</span> schedule_meeting(time, with_person)</span></pre>
+            <p name="6b42" id="6b42" class="graf graf--p graf-after--pre">This MCP server defines the same three
+              functions we saw in the previous examples. The advantage of this method lies in the “client” side or the
+              agent utilisation of these tools.</p>
+            <p name="b7f3" id="b7f3" class="graf graf--p graf-after--p">Now, no matter which agent (ChatGPT, Claude) or
+              which language you use these tools are made available for use through the server.</p>
+            <pre data-code-block-mode="2" spellcheck="false" data-code-block-lang="python" name="fcb1" id="fcb1"
+              class="graf graf--pre graf-after--p graf--preV2"><span class="pre--content">agent = OpenAI()<br />mcp_client = MCPClient(<span class="hljs-string">&quot;http://&lt;location-of-mcp-server&gt;:8000/mcp&quot;</span>)<br /><br />tools = mcp_client.list_tools() <span class="hljs-comment"># This exposes the three tools we defined above</span><br /><br />prompt = <span class="hljs-string">&quot;Please look at my latest email and schedule a meeting in an <br />empty slot in my calendar.&quot;</span><br /><br />response = agent.chat.completions.create(<br />    model=<span class="hljs-string">&quot;gpt-4o&quot;</span>,<br />    messages=[<br />        {<span class="hljs-string">&quot;role&quot;</span>: <span class="hljs-string">&quot;user&quot;</span>, <span class="hljs-string">&quot;content&quot;</span>: prompt},<br />    ],<br />    tools=tools<br />)<br /><br /><span class="hljs-built_in">print</span>(response.choices[<span class="hljs-number">0</span>].message[<span class="hljs-string">&quot;content&quot;</span>])</span></pre>
+            <p name="e028" id="e028" class="graf graf--p graf-after--pre">The real advantage of this implementation is
+              realised when we take a look at the second javascript implementation with Claude.</p>
+            <pre data-code-block-mode="2" spellcheck="false" data-code-block-lang="javascript" name="9728" id="9728"
+              class="graf graf--pre graf-after--p graf--preV2"><span class="pre--content"><span class="hljs-keyword">const</span> client = <span class="hljs-title class_">ClaudeAI</span>();<br /><span class="hljs-keyword">const</span> mcpClient = <span class="hljs-title class_">MCPClient</span>();<br /><span class="hljs-keyword">const</span> tools = mcpClient.<span class="hljs-title function_">listTools</span>();<br /><br /><span class="hljs-keyword">const</span> prompt = <span class="hljs-string">`Please look at my latest email and schedule a meeting in an <br />empty slot in my calendar.`</span><br /><br /><span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> client.<span class="hljs-property">messages</span>.<span class="hljs-title function_">create</span>({<br />  <span class="hljs-attr">model</span>: <span class="hljs-string">&quot;claude-3-5-sonnet-20240620&quot;</span>,<br />  <span class="hljs-attr">messages</span>: {<span class="hljs-attr">role</span>: <span class="hljs-string">&quot;user&quot;</span>, <span class="hljs-attr">content</span>: prompt},<br />  <span class="hljs-attr">tools</span>: tools<br />)<br /><br /><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(response)</span></pre>
+            <p name="42e7" id="42e7" class="graf graf--p graf-after--pre">We can clearly see, not only the reduction in
+              code, but also the ability to spin up any agent and quickly give it access to the data and functionality
+              the it needs to achieve the required functionality.</p>
+            <p name="6d2c" id="6d2c" class="graf graf--p graf-after--p">This changes our M X N integration problem into
+              a much more scalable M + N problem. For every agent, M, and every integration N only <strong
+                class="markup--strong markup--p-strong">M plus N</strong> connections need to be created.</p>
+            <p name="1fec" id="1fec" class="graf graf--p graf-after--p">Need to add another Agent, Gemini in Ruby? Only
+              one additional connection (Gemini — MCP Server) needs to be made, and the new agent will automatically
+              have access to all the tools.</p>
+            <figure name="6b5b" id="6b5b" class="graf graf--figure graf-after--p"><img class="graf-image"
+                data-image-id="1*rFxZfu8pJzpGTIY8e9F97w.png" data-width="2962" data-height="1534"
+                src="https://cdn-images-1.medium.com/max/800/1*rFxZfu8pJzpGTIY8e9F97w.png">
+              <figcaption class="imageCaption">M + N connections</figcaption>
+            </figure>
+            <p name="81d3" id="81d3" class="graf graf--p graf-after--figure"><strong
+                class="markup--strong markup--p-strong">MCP Framework</strong></p>
+            <p name="2726" id="2726" class="graf graf--p graf-after--p">This is just a small sample of what the
+              Framework can achieve and you’ve only see one aspect of it in tool use. It supports many other features
+              such as prompts, resources, streamable responses and more.</p>
+            <p name="9550" id="9550" class="graf graf--p graf-after--p">Stay tuned for the next article for a deep dive
+              into the framework.</p>
+            <p name="4ace" id="4ace" class="graf graf--p graf-after--p"><strong
+                class="markup--strong markup--p-strong">MCP Examples</strong></p>
+            <p name="80b8" id="80b8" class="graf graf--p graf-after--p">It’s good to look at some examples of MCP
+              servers to get an idea of what is possible.</p>
+            <ul class="postList">
+              <li name="f42d" id="f42d" class="graf graf--li graf-after--p"><a
+                  href="https://github.com/modelcontextprotocol/servers/tree/main/src/fetch"
+                  data-href="https://github.com/modelcontextprotocol/servers/tree/main/src/fetch"
+                  class="markup--anchor markup--li-anchor" rel="noopener" target="_blank">Fetch tool</a> — Gives agents
+                access fetch content from any webpage</li>
+              <li name="83ae" id="83ae" class="graf graf--li graf-after--li"><a
+                  href="https://github.com/modelcontextprotocol/servers/tree/main/src/git"
+                  data-href="https://github.com/modelcontextprotocol/servers/tree/main/src/git"
+                  class="markup--anchor markup--li-anchor" rel="noopener" target="_blank">Git</a> — Adds the ability to
+                access git repositories. Make commits, branches and PRs with your AI Agent!</li>
+              <li name="4fb5" id="4fb5" class="graf graf--li graf-after--li"><a
+                  href="https://github.com/modelcontextprotocol/servers-archived/tree/main/src/slack"
+                  data-href="https://github.com/modelcontextprotocol/servers-archived/tree/main/src/slack"
+                  class="markup--anchor markup--li-anchor" rel="noopener" target="_blank">Slack</a> — Enable your agent
+                to message your slack channels</li>
+              <li name="c53e" id="c53e" class="graf graf--li graf-after--li graf--trailing"><a
+                  href="https://github.com/modelcontextprotocol/servers-archived/tree/main/src/google-maps"
+                  data-href="https://github.com/modelcontextprotocol/servers-archived/tree/main/src/google-maps"
+                  class="markup--anchor markup--li-anchor" rel="noopener" target="_blank">Google Maps</a> — Let your
+                agent pull data from the maps database to find your next dinner destination.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </section>
+  </article>
+</body>
+
+</html>

@@ -48,6 +48,11 @@ export default function Navbar() {
                             Resume
                         </Link>
                     </li>
+                    <li>
+                        <Link href="/blog" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                            Blog
+                        </Link>
+                    </li>
                 </ul>
 
                 {/* Mobile menu overlay */}
@@ -89,6 +94,15 @@ export default function Navbar() {
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Resume
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        href="/blog"
+                                        className="block text-xl text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Blog
                                     </Link>
                                 </li>
                             </ul>
