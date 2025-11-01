@@ -23,7 +23,7 @@ export default function Projects() {
             title: "Calo Trak",
             description: "An iOS app that allows you to track your calories and macros, with external food API integration.",
             imageSrc: "/calo-trak-photo.png",
-            tags: ["Swift", "SwiftUI", "XCode", "CoreData", "Firebase", "Mobile Development"],
+            tags: ["Swift", "SwiftUI", "XCode", "CoreData", "Firebase", "iOS"],
             githubUrl: "https://github.com/sushen25/calorie-tracker"
         },
         // Add more projects as needed
