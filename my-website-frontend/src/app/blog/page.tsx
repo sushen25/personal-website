@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import Image from "next/image";
 import { posts } from "./posts";
 
 export default function Blog() {
@@ -53,11 +54,13 @@ export default function Blog() {
                                             )}
                                         </div>
                                         {post.thumbnail && (
-                                            <div className="flex-shrink-0 w-full md:w-64 h-full relative rounded-lg overflow-hidden">
-                                                <img
+                                            <div className="flex-shrink-0 w-full md:w-64 h-48 md:h-auto relative rounded-lg overflow-hidden">
+                                                <Image
                                                     src={post.thumbnail}
                                                     alt={post.title}
-                                                    className="w-full h-full object-cover rounded-lg"
+                                                    fill
+                                                    className="object-cover rounded-lg"
+                                                    sizes="(max-width: 768px) 100vw, 256px"
                                                 />
                                             </div>
                                         )}

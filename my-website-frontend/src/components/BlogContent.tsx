@@ -56,7 +56,7 @@ export default function BlogContent({ html }: BlogContentProps) {
         const preElements = Array.from(tempDiv.querySelectorAll('pre[data-code-block-lang]'));
 
         // Process each code block
-        preElements.forEach((pre, index) => {
+        preElements.forEach((pre) => {
             const lang = pre.getAttribute('data-code-block-lang') || 'text';
             const contentSpan = pre.querySelector('.pre--content');
 
