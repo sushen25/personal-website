@@ -44,13 +44,13 @@ export default function Navbar() {
                         </Link>
                     </li>
                     <li>
-                        <Link href="/resume" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                            Resume
+                        <Link href="/blog" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                            Blog
                         </Link>
                     </li>
                     <li>
-                        <Link href="/blog" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                            Blog
+                        <Link href="/resume" className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                            Resume
                         </Link>
                     </li>
                 </ul>
