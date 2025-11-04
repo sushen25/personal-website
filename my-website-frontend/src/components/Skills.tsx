@@ -4,7 +4,8 @@ export default function Skills() {
         "JavaScript", "TypeScript", "React", "Next.js",
         "Node.js", "Express", "Python", "SQL",
         "MongoDB", "AWS", "Docker", "Git",
-        "CSS", "Tailwind CSS", "RESTful APIs", "GraphQL"
+        "CSS", "Tailwind CSS", "RESTful APIs", "GraphQL",
+        "AI Agents", "CrewAI", "Streamlit", "Python", "OpenAI"
     ];
 
     return (

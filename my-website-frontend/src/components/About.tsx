@@ -20,7 +20,7 @@ export default function About() {
                     </p>
 
                     <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
-                        Working with React, Node, AWS and MySQL.
+                        Using React, Node, AWS and MySQL.
                         Working at a startup requires me to operate across the full stack, contributing to everything from designing intuitive user interfaces to configuring infrastructure within the AWS ecosystem.
                     </p>
 
@@ -29,9 +29,13 @@ export default function About() {
                         or playing my favourite sports in badminton, pickleball or tennis.
                     </p>
 
-                    <p className="text-lg text-gray-700 dark:text-gray-300">
+                    <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
                         You can check out some of the projects I&apos;ve worked on in my spare time on the <Link href="/projects" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">projects page</Link>.
                         I&apos;d love to hear your thoughts!
+                    </p>
+
+                    <p className="text-lg text-gray-700 dark:text-gray-300">
+                        I also write about my experiences and learnings on the <Link href="/blog" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">blog page</Link>.
                     </p>
                 </div>
             </div>
