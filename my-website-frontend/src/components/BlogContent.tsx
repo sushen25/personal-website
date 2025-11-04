@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { nightOwl } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { createRoot } from "react-dom/client";
 
 // Import language definitions
-import 'react-syntax-highlighter/dist/esm/languages/prism/python';
-import 'react-syntax-highlighter/dist/esm/languages/prism/typescript';
-import 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
+import 'react-syntax-highlighter/dist/esm/languages/hljs/python';
+import 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
+import 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 
 interface BlogContentProps {
     html: string;
@@ -30,17 +30,8 @@ function CodeBlock({ code, language }: { code: string; language: string }) {
         <div className="code-block-wrapper my-6">
             <SyntaxHighlighter
                 language={prismLang}
-                style={oneLight}
-                customStyle={{
-                    fontSize: "1rem",
-                    padding: "1.5rem",
-                    borderRadius: "0.5rem",
-                    margin: "0",
-                    fontFamily: "'Courier New', Courier, monospace",
-                    background: "#f8f9fa",
-                }}
-                showLineNumbers={false}
-                PreTag="div"
+                style={nightOwl}
+                showLineNumbers={true}
             >
                 {code}
             </SyntaxHighlighter>
@@ -95,6 +86,7 @@ export default function BlogContent({ html }: BlogContentProps) {
         });
 
         // Set the processed HTML
+        // TODO: security risks here
         container.innerHTML = tempDiv.innerHTML;
         renderedRef.current = true;
 
@@ -103,6 +95,9 @@ export default function BlogContent({ html }: BlogContentProps) {
         placeholders.forEach((placeholder) => {
             const code = placeholder.getAttribute('data-code') || '';
             const lang = placeholder.getAttribute('data-lang') || 'text';
+
+            console.log('code', code);
+            console.log('lang', lang);
 
             if (code && placeholder.parentNode) {
                 const wrapper = document.createElement('div');
@@ -114,5 +109,5 @@ export default function BlogContent({ html }: BlogContentProps) {
         });
     }, [html]);
 
-    return <div ref={containerRef} className="blog-article text-gray-700 dark:text-gray-300" />;
+    return <div ref={containerRef} className="blog-article" />;
 }

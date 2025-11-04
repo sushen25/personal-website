@@ -150,11 +150,29 @@ body {
   background-color: #1f2937;
 }
 
-.blog-article pre code {
+/* Only apply to code not in syntax highlighter */
+.blog-article pre:not(.code-block-wrapper pre):not(.code-block-wrapper > div > pre) code {
   background-color: transparent;
   padding: 0;
   font-size: 1rem;
 }
+
+/* Exclude Prism code blocks from blog-article styles */
+.blog-article .code-block-wrapper pre,
+.blog-article .code-block-wrapper>div>pre {
+  /* Let Prism theme handle all styling */
+  background-color: inherit;
+}
+
+.blog-article .code-block-wrapper code,
+.blog-article .code-block-wrapper pre code {
+  background-color: transparent !important;
+  padding: 0 !important;
+  /* Don't set color - Prism uses inline styles which have highest specificity */
+}
+
+/* Ensure Prism token spans aren't affected by blog-article styles */
+/* Don't set color on spans - Prism uses inline styles for colors */
 
 /* Syntax highlighting styles (highlight.js compatible) */
 .blog-article pre .pre--content {
@@ -310,14 +328,37 @@ body {
   color: #9ca3af;
 }
 
-/* Code block wrapper styling */
+/* Code block wrapper styling - Prism Syntax Highlighter */
 .code-block-wrapper {
   margin: 1.5rem 0;
 }
 
+/* Prism Syntax Highlighter - react-syntax-highlighter wraps in a div */
+.code-block-wrapper>div {
+  display: block;
+}
+
 .code-block-wrapper pre {
   margin: 0 !important;
+  padding: 1.5rem !important;
+  border-radius: 0.5rem !important;
+  overflow-x: auto !important;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+  font-family: 'Courier New', Courier, monospace !important;
+  /* Prism theme sets background via inline style - don't override */
 }
+
+.code-block-wrapper code {
+  font-family: 'Courier New', Courier, monospace !important;
+  padding: 0 !important;
+  font-size: inherit !important;
+  /* Don't override background - let Prism theme handle it */
+}
+
+/* CRITICAL: Prism tokens use inline styles - ensure they're not overridden */
+/* Prism applies colors via inline styles (style="color: #...") which have highest specificity */
+/* Do NOT set color properties here - let Prism's inline styles work */
 
 .code-block-container {
   margin: 1.5rem 0;
