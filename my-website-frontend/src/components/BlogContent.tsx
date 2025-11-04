@@ -10,6 +10,8 @@ import 'react-syntax-highlighter/dist/esm/languages/hljs/python';
 import 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
 import 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
 
+import DOMPurify from 'dompurify';
+
 interface BlogContentProps {
     html: string;
 }
@@ -48,7 +50,7 @@ export default function BlogContent({ html }: BlogContentProps) {
 
         const container = containerRef.current;
         const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = html;
+        tempDiv.innerHTML = DOMPurify.sanitize(html);
 
         // Find all pre elements with code blocks
         const preElements = Array.from(tempDiv.querySelectorAll('pre[data-code-block-lang]'));
@@ -60,7 +62,7 @@ export default function BlogContent({ html }: BlogContentProps) {
 
             if (contentSpan) {
                 // Extract and clean code
-                let code = contentSpan.innerHTML;
+                let code = DOMPurify.sanitize(contentSpan.innerHTML);
 
                 // Replace <br> and <br/> with newlines
                 code = code.replace(/<br\s*\/?>/gi, '\n');
@@ -70,7 +72,7 @@ export default function BlogContent({ html }: BlogContentProps) {
 
                 // Decode HTML entities
                 const textarea = document.createElement('textarea');
-                textarea.innerHTML = code;
+                textarea.innerHTML = DOMPurify.sanitize(code);
                 code = textarea.value;
 
                 // Normalize and clean
@@ -87,7 +89,7 @@ export default function BlogContent({ html }: BlogContentProps) {
 
         // Set the processed HTML
         // TODO: security risks here
-        container.innerHTML = tempDiv.innerHTML;
+        container.innerHTML = DOMPurify.sanitize(tempDiv.innerHTML);
         renderedRef.current = true;
 
         // Now render all code blocks
