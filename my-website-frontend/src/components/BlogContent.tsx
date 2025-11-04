@@ -93,6 +93,7 @@ export default function BlogContent({ html }: BlogContentProps) {
         renderedRef.current = true;
 
         // Now render all code blocks
+        // TODO: code word
         const placeholders = container.querySelectorAll('.code-block-placeholder');
         placeholders.forEach((placeholder) => {
             const code = placeholder.getAttribute('data-code') || '';
