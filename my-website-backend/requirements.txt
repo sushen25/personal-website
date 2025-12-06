@@ -14,10 +14,8 @@ pydantic-settings==2.1.0
 # Environment variables
 python-dotenv==1.0.0
 
-# AI Providers
-openai==1.3.0
-google-generativeai==0.3.0
-anthropic==0.7.0
+# HTTP client for Agent Service communication
+httpx==0.28.1
 
 # Utilities
 python-jose[cryptography]==3.3.0
