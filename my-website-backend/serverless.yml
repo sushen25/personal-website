@@ -1,0 +1,216 @@
+service: my-website-backend
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: ap-southeast-2
+  stage: ${opt:stage, 'dev'}
+  memorySize: 512
+  timeout: 30
+  environment:
+    STAGE: ${self:provider.stage}
+    CHAT_CONVERSATIONS_TABLE: ${self:provider.stage}-portfolio-chat-conversations
+    BLOG_POSTS_TABLE: ${self:provider.stage}-portfolio-blog-posts
+    ANALYTICS_TABLE: ${self:provider.stage}-portfolio-analytics
+    PYTHONPATH: /var/task
+  iam:
+    role:
+      statements:
+        # DynamoDB permissions
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchGetItem
+            - dynamodb:BatchWriteItem
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.stage}-portfolio-*
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.stage}-portfolio-*/index/*
+        # Secrets Manager permissions
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource:
+            - arn:aws:secretsmanager:${self:provider.region}:*:secret:${self:provider.stage}/portfolio/*
+
+functions:
+  api:
+    handler: src.main.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+      - http:
+          path: /
+          method: ANY
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    layer: false
+    zip: true
+    slim: true
+    strip: false
+    noDeploy:
+      - pytest
+      - pytest-cov
+      - mypy
+
+resources:
+  Resources:
+    # Chat Conversations Table
+    # ChatConversationsTable:
+    #   Type: AWS::DynamoDB::Table
+    #   Properties:
+    #     TableName: ${self:provider.stage}-portfolio-chat-conversations
+    #     BillingMode: PAY_PER_REQUEST
+    #     AttributeDefinitions:
+    #       - AttributeName: sessionId
+    #         AttributeType: S
+    #       - AttributeName: timestamp
+    #         AttributeType: N
+    #       - AttributeName: createdDate
+    #         AttributeType: S
+    #     KeySchema:
+    #       - AttributeName: sessionId
+    #         KeyType: HASH
+    #       - AttributeName: timestamp
+    #         KeyType: RANGE
+    #     GlobalSecondaryIndexes:
+    #       - IndexName: CreatedDateIndex
+    #         KeySchema:
+    #           - AttributeName: createdDate
+    #             KeyType: HASH
+    #           - AttributeName: timestamp
+    #             KeyType: RANGE
+    #         Projection:
+    #           ProjectionType: ALL
+    #     TimeToLiveSpecification:
+    #       AttributeName: ttl
+    #       Enabled: true
+    #     StreamSpecification:
+    #       StreamViewType: NEW_AND_OLD_IMAGES
+
+    # # Blog Posts Table
+    # BlogPostsTable:
+    #   Type: AWS::DynamoDB::Table
+    #   Properties:
+    #     TableName: ${self:provider.stage}-portfolio-blog-posts
+    #     BillingMode: PAY_PER_REQUEST
+    #     AttributeDefinitions:
+    #       - AttributeName: postId
+    #         AttributeType: S
+    #       - AttributeName: slug
+    #         AttributeType: S
+    #       - AttributeName: status
+    #         AttributeType: S
+    #       - AttributeName: publishedDate
+    #         AttributeType: S
+    #     KeySchema:
+    #       - AttributeName: postId
+    #         KeyType: HASH
+    #     GlobalSecondaryIndexes:
+    #       - IndexName: StatusPublishedDateIndex
+    #         KeySchema:
+    #           - AttributeName: status
+    #             KeyType: HASH
+    #           - AttributeName: publishedDate
+    #             KeyType: RANGE
+    #         Projection:
+    #           ProjectionType: ALL
+    #       - IndexName: SlugIndex
+    #         KeySchema:
+    #           - AttributeName: slug
+    #             KeyType: HASH
+    #         Projection:
+    #           ProjectionType: ALL
+    #     StreamSpecification:
+    #       StreamViewType: NEW_AND_OLD_IMAGES
+
+    # # Analytics Table
+    # AnalyticsTable:
+    #   Type: AWS::DynamoDB::Table
+    #   Properties:
+    #     TableName: ${self:provider.stage}-portfolio-analytics
+    #     BillingMode: PAY_PER_REQUEST
+    #     AttributeDefinitions:
+    #       - AttributeName: metricType
+    #         AttributeType: S
+    #       - AttributeName: timestamp
+    #         AttributeType: N
+    #       - AttributeName: date
+    #         AttributeType: S
+    #     KeySchema:
+    #       - AttributeName: metricType
+    #         KeyType: HASH
+    #       - AttributeName: timestamp
+    #         KeyType: RANGE
+    #     GlobalSecondaryIndexes:
+    #       - IndexName: DateIndex
+    #         KeySchema:
+    #           - AttributeName: date
+    #             KeyType: HASH
+    #           - AttributeName: timestamp
+    #             KeyType: RANGE
+    #         Projection:
+    #           ProjectionType: ALL
+    #     TimeToLiveSpecification:
+    #       AttributeName: ttl
+    #       Enabled: true
+    #     StreamSpecification:
+    #       StreamViewType: NEW_AND_OLD_IMAGES
+
+  Outputs:
+    ApiUrl:
+      Description: API Gateway endpoint URL
+      Value:
+        Fn::Join:
+          - ''
+          - - https://
+            - Ref: HttpApi
+            - .execute-api.
+            - ${self:provider.region}
+            - .amazonaws.com
+            - /
+            - ${self:provider.stage}
+    # ChatConversationsTableName:
+    #   Description: Chat Conversations DynamoDB Table Name
+    #   Value:
+    #     Ref: ChatConversationsTable
+    # BlogPostsTableName:
+    #   Description: Blog Posts DynamoDB Table Name
+    #   Value:
+    #     Ref: BlogPostsTable
+    # AnalyticsTableName:
+    #   Description: Analytics DynamoDB Table Name
+    #   Value:
+    #     Ref: AnalyticsTable
