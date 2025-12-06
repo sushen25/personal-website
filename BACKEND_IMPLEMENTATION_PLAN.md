@@ -9,26 +9,40 @@ Build a serverless backend using **FastAPI + Mangum** on **AWS Lambda** with **D
 ### Technology Stack
 - **Backend Framework**: FastAPI with Mangum (ASGI adapter for Lambda)
 - **Language**: Python 3.11
+- **AI Framework**: Strands Agents SDK (model-driven multi-agent framework)
 - **Database**: DynamoDB (serverless, pay-per-request)
 - **Deployment**: Serverless Framework
 - **Cloud Provider**: AWS Lambda (ap-southeast-2 region)
-- **AI Providers**: OpenAI, Gemini, Claude (existing support)
+- **AI Providers**: Amazon Bedrock, OpenAI, Anthropic, Gemini (via Strands Agents)
 
 ### Directory Structure
 ```
 my-website/
 ├── my-website-frontend/          # Existing Next.js frontend
-└── my-website-backend/           # NEW - Serverless backend
+├── my-website-backend/           # FastAPI backend (main Lambda)
+│   ├── src/
+│   │   ├── handlers/              # API route handlers
+│   │   ├── services/              # Business logic
+│   │   ├── models/                # Pydantic models
+│   │   ├── middleware/            # FastAPI middleware
+│   │   ├── utils/                 # Utilities (DynamoDB, Secrets Manager)
+│   │   └── main.py                # Main FastAPI app + Lambda handler
+│   ├── scripts/                   # Database seeding scripts
+│   ├── serverless.yml             # Infrastructure as code
+│   ├── requirements.txt           # Python dependencies (FastAPI, boto3, etc.)
+│   └── .python-version            # Python version specification
+└── agent-service/                # NEW - Strands Agent Service (separate Lambda)
     ├── src/
-    │   ├── handlers/              # API route handlers
-    │   ├── services/              # Business logic
-    │   ├── models/                # Pydantic models
-    │   ├── middleware/            # FastAPI middleware
-    │   ├── utils/                 # Utilities (DynamoDB, Secrets Manager)
-    │   └── main.py                # Main FastAPI app + Lambda handler
-    ├── scripts/                   # Database seeding scripts
-    ├── serverless.yml             # Infrastructure as code
-    ├── requirements.txt           # Python dependencies
+    │   ├── agent/                 # Strands agent implementation
+    │   │   └── personal_assistant.py
+    │   ├── tools/                 # Custom agent tools
+    │   │   ├── profile_tools.py
+    │   │   ├── blog_tools.py
+    │   │   └── project_tools.py
+    │   ├── models/                # Agent-specific models
+    │   └── main.py                # Agent Lambda handler
+    ├── serverless.yml             # Agent service infrastructure
+    ├── requirements.txt           # Agent dependencies (strands-agents)
     └── .python-version            # Python version specification
 ```
 
@@ -83,14 +97,14 @@ my-website/
 
 ## Critical Files to Create/Modify
 
-### Backend (New Files)
+### Backend API (my-website-backend/)
 
 1. **`/my-website-backend/serverless.yml`**
    - Define DynamoDB tables with CloudFormation
-   - Configure Lambda function with API Gateway
+   - Configure FastAPI Lambda function with API Gateway
    - Set IAM permissions for DynamoDB and Secrets Manager
    - Environment variables for table names
-   - Python runtime configuration
+   - API Gateway endpoint for frontend integration
 
 2. **`/my-website-backend/src/main.py`**
    - FastAPI app setup with routes
@@ -98,17 +112,18 @@ my-website/
    - Global middleware (CORS, error handling)
 
 3. **`/my-website-backend/src/services/chat_service.py`**
-   - AI chat logic (OpenAI/Gemini/Claude integration)
+   - HTTP client to communicate with Agent Service
    - Session management and message persistence
-   - Fetch API keys from AWS Secrets Manager
-   - Get user context from DynamoDB instead of hardcoded file
+   - Save agent responses to DynamoDB
+   - Handle agent service errors gracefully
 
 4. **`/my-website-backend/src/services/content_service.py`**
-   - Format content for AI chatbot system prompt
+   - Format content for agent system prompt
+   - Fetch user context from DynamoDB
 
 5. **`/my-website-backend/src/utils/secrets_manager.py`**
    - AWS Secrets Manager client with caching
-   - Retrieve OpenAI/Gemini/Claude API keys securely
+   - Retrieve API keys for AI model providers
 
 6. **`/my-website-backend/src/utils/dynamodb.py`**
    - DynamoDB client setup using boto3
@@ -120,11 +135,50 @@ my-website/
 
 8. **`/my-website-backend/src/models/schemas.py`**
    - Pydantic models for request/response validation
-   - Type definitions for chat messages, sessions, etc.
+   - Type definitions for chat messages, sessions
 
-9. **`/my-website-backend/scripts/migrate_user_context.py`**
-   - One-time migration script
-   - Migrate data from `/my-website-frontend/src/lib/userContext.ts` to DynamoDB
+9. **`/my-website-backend/src/handlers/chat.py`**
+   - FastAPI router for chat endpoints
+   - Request validation and routing
+
+10. **`/my-website-backend/scripts/migrate_user_context.py`**
+    - One-time migration script
+    - Migrate data from frontend to DynamoDB
+
+### Agent Service (agent-service/)
+
+11. **`/agent-service/serverless.yml`**
+    - Configure Agent Lambda function
+    - Set IAM permissions for DynamoDB and Secrets Manager
+    - Internal API (no public API Gateway, invoked by backend Lambda)
+
+12. **`/agent-service/src/main.py`**
+    - Lambda handler for agent invocations
+    - Initialize and run Strands Agent
+    - Return agent responses
+
+13. **`/agent-service/src/agent/personal_assistant.py`**
+    - Main Strands Agent configuration
+    - Agent system prompt and personality
+    - Model provider configuration (Bedrock/OpenAI/Anthropic)
+    - Conversation memory setup
+
+14. **`/agent-service/src/tools/profile_tools.py`**
+    - Custom tools for profile, skills, education
+    - `@tool get_about_me()`, `@tool get_skills()`, `@tool get_education()`
+
+15. **`/agent-service/src/tools/blog_tools.py`**
+    - Custom tools for blog content
+    - `@tool search_blog_posts()`, `@tool get_blog_post()`, `@tool list_recent_blog_posts()`
+
+16. **`/agent-service/src/tools/project_tools.py`**
+    - Custom tools for projects
+    - `@tool search_projects()`, `@tool get_project_details()`, `@tool list_all_projects()`
+
+17. **`/agent-service/requirements.txt`**
+    - Strands Agents SDK
+    - Strands Agent Tools
+    - boto3 (for DynamoDB access)
 
 ### Frontend (Modified Files)
 
@@ -154,18 +208,45 @@ python3.11 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-**Step 1.3: Create Requirements File**
-Create `requirements.txt` with core dependencies:
+**Step 1.3: Create Requirements File for Backend API**
+Create `my-website-backend/requirements.txt`:
 ```
+# FastAPI and ASGI
 fastapi==0.104.1
 mangum==0.17.0
-boto3==1.34.0
-pydantic==2.5.0
-python-dotenv==1.0.0
-openai==1.3.0
-google-generativeai==0.3.0
-anthropic==0.7.0
 uvicorn[standard]==0.24.0
+
+# AWS SDK
+boto3==1.34.0
+botocore==1.34.0
+
+# Data validation
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Environment variables
+python-dotenv==1.0.0
+
+# HTTP client for agent service communication
+httpx==0.28.1
+
+# Utilities
+python-jose[cryptography]==3.3.0
+python-multipart==0.0.6
+```
+
+**Step 1.3b: Create Requirements File for Agent Service**
+Create `agent-service/requirements.txt`:
+```
+# Strands Agents Framework
+strands-agents>=0.1.0
+strands-agents-tools>=0.1.0
+
+# AWS SDK (for DynamoDB access in tools)
+boto3==1.34.0
+
+# Environment variables
+python-dotenv==1.0.0
 ```
 
 **Step 1.4: Install Dependencies**
@@ -199,7 +280,7 @@ This creates all DynamoDB tables and Lambda function.
 ### Phase 2: Core Backend Implementation
 
 **Step 2.1: FastAPI App Setup (`src/main.py`)**
-- Create FastAPI app with routes for chat, blog, analytics
+- Create FastAPI app with routes for chat, blog
 - Add CORS middleware (allow `https://sushensatturu.com`, `http://localhost:3000`)
 - Add error handler middleware
 - Wrap with Mangum and export handler for Lambda
@@ -208,7 +289,7 @@ This creates all DynamoDB tables and Lambda function.
 **Step 2.2: Pydantic Models (`src/models/schemas.py`)**
 - Define request/response models with Pydantic
 - ChatMessage, ChatRequest, ChatResponse
-- BlogPost, AnalyticsEvent models
+- BlogPost models
 - Automatic validation and serialization
 
 **Step 2.3: DynamoDB Utilities (`src/utils/dynamodb.py`)**
@@ -225,25 +306,76 @@ This creates all DynamoDB tables and Lambda function.
 - `format_for_chatbot()` - Format content as system prompt (similar to existing `formatUserContextForPrompt()`)
 - Query DynamoDB for user context data
 
-**Step 2.6: Chat Service (`src/services/chat_service.py`)**
-- `send_message(session_id, messages)`:
-  1. Get user context from DynamoDB (not hardcoded file)
-  2. Fetch API key from Secrets Manager
-  3. Call AI provider (OpenAI/Gemini/Claude) with async
-  4. Save user message and AI response to DynamoDB
-  5. Return AI response with metadata
+**Step 2.6: Agent Service Communication (`src/services/agent_client.py`)**
+- HTTP client to invoke Agent Service Lambda
+- Methods:
+  - `invoke_agent(session_id, messages, model_provider)` - Call agent service
+  - Handle timeouts and retries
+  - Parse agent responses
+- Use AWS Lambda invoke API or HTTP endpoint
+
+**Step 2.7: Personal AI Assistant Agent (`agent-service/src/agent/personal_assistant.py`)**
+- Define Strands Agent with comprehensive custom tools
+- Configure model provider (Amazon Bedrock, OpenAI, or Anthropic)
+- Create custom tools for querying personal information:
+  - **Profile & About**:
+    - `@tool get_about_me()` - Fetch bio, background, current role, location
+    - `@tool get_skills()` - Query technical skills, languages, frameworks, tools
+    - `@tool get_education()` - Retrieve education history and certifications
+  - **Professional Experience**:
+    - `@tool get_work_experience()` - Fetch complete work history
+    - `@tool get_experience_details(company_or_role)` - Get specific role details
+  - **Projects**:
+    - `@tool search_projects(query)` - Search projects by keyword, technology, or type
+    - `@tool get_project_details(project_name)` - Get detailed project information
+    - `@tool list_all_projects()` - Return all projects with summaries
+  - **Blog Content**:
+    - `@tool search_blog_posts(query)` - Search blog posts by title, tags, or content
+    - `@tool get_blog_post(slug)` - Fetch full blog post by slug
+    - `@tool list_recent_blog_posts(limit=5)` - Get recent published posts
+    - `@tool get_blog_posts_by_tag(tag)` - Filter posts by tag
+  - **General**:
+    - `@tool get_contact_info()` - Return contact methods (email, LinkedIn, GitHub, etc.)
+    - `@tool get_resume_summary()` - Generate comprehensive profile summary
+- Set comprehensive system prompt:
+  - Identity: "You are an AI assistant representing [Your Name]"
+  - Purpose: Help visitors learn about background, skills, projects, and blog content
+  - Tone: Professional yet approachable, knowledgeable, enthusiastic
+  - Guidelines: Use tools to fetch accurate information, don't make up facts
+- Configure conversation memory for contextual multi-turn conversations
+
+**Step 2.8: Custom Agent Tools (`agent-service/src/tools/`)**
+- **profile_tools.py**: Profile, skills, education tools
+- **blog_tools.py**: Blog search and retrieval tools
+- **project_tools.py**: Project search and details tools
+- All tools query DynamoDB via shared content service
+- Use `@tool` decorator from Strands SDK
+
+**Step 2.9: Chat Service (`src/services/chat_service.py`)**
+- `send_message(session_id, messages, model_provider)`:
+  1. Load conversation history from DynamoDB
+  2. Call Agent Service via agent_client
+  3. Save user message and agent response to DynamoDB
+  4. Return agent response with metadata
 - `get_conversation_history(session_id)` - Query DynamoDB for session
 
-**Step 2.7: Chat Routes (`src/handlers/chat.py`)**
+**Step 2.10: Chat Routes (`src/handlers/chat.py`)**
 - FastAPI router with routes:
   - `POST /api/chat` - Validate request with Pydantic, call chat_service.send_message()
   - `GET /api/chat/session/{session_id}` - Call chat_service.get_conversation_history()
 - Automatic request validation with Pydantic models
 
-**Step 2.8: Error Handler Middleware**
+**Step 2.11: Error Handler Middleware (`src/middleware/error_handler.py`)**
 - Create custom exception classes (AppError, NotFoundError, ValidationError)
 - Global exception handler to catch all errors
 - Return structured JSON error responses with proper status codes
+
+**Step 2.12: Agent Service Lambda Handler (`agent-service/src/main.py`)**
+- Lambda handler function
+- Parse incoming event (session_id, messages, model_provider)
+- Initialize Strands Agent
+- Invoke agent with messages
+- Return response in standardized format
 
 ### Phase 3: AWS Configuration
 
@@ -366,17 +498,30 @@ serverless logs --function api --stage dev --tail
 - Verify chat messages are being saved
 - Check conversation history retrieval works
 
-## MCP Server Integration (Future)
+## MCP Server Integration
 
-The architecture is designed to support MCP (Model Context Protocol) integration:
+Strands Agents has **built-in MCP (Model Context Protocol) support**, making it easy to integrate thousands of pre-built tools:
 
-1. Create `src/services/mcp_service.py` with MCP client
+### Current Integration (via Strands Agents)
+- Strands Agents SDK includes native MCP tool integration
+- Access to MCP tool marketplace for extended capabilities
+- Automatic tool discovery and registration
+
+### Future Enhancements
+1. Create `src/services/mcp_service.py` for custom MCP server
 2. Register portfolio content as MCP context sources
-3. Enable external AI agents to query portfolio data
+3. Enable external AI agents to query portfolio data via MCP
 4. Potential use cases:
    - Resume generation from context
    - Personalized cover letters
    - Interview preparation assistance
+   - Integration with other AI tools that support MCP
+
+### Benefits of Strands + MCP
+- **Tool Ecosystem**: Access to thousands of pre-built MCP tools
+- **Standardization**: Industry-standard protocol for AI tool integration
+- **Extensibility**: Easy to add new capabilities without code changes
+- **Interoperability**: Works with other MCP-compatible AI systems
 
 ## Security Considerations
 
@@ -442,6 +587,126 @@ If issues occur:
 3. Roll back Lambda deployment: `serverless rollback --timestamp <timestamp>`
 4. Frontend environment variables can be reverted to use old endpoints
 
+## Strands Agents Architecture
+
+### Microservices Architecture
+
+The backend is separated into two Lambda functions to isolate dependencies:
+
+1. **Backend API Lambda** (FastAPI)
+   - Handles HTTP requests from frontend
+   - Manages DynamoDB operations
+   - Orchestrates chat workflow
+   - Compatible with anyio <4.0
+
+2. **Agent Service Lambda** (Strands)
+   - Runs Strands Agent framework
+   - Executes custom tools
+   - Calls LLM providers
+   - Uses anyio >=4.0 (required by Strands)
+
+### Request Flow
+
+```
+User Request → API Gateway → Backend Lambda (FastAPI)
+                                    ↓
+                            Chat Service
+                                    ↓
+                            Agent Client (HTTP/Lambda Invoke)
+                                    ↓
+                            Agent Service Lambda (Strands)
+                                    ↓
+                            Personal Assistant Agent
+                            ↓               ↓
+                      Custom Tools    LLM Provider
+                            ↓         (Bedrock/OpenAI)
+                      DynamoDB
+                   (portfolio data)
+                                    ↓
+                            Response back through chain
+                                    ↓
+                            Backend Lambda saves to DynamoDB
+                                    ↓
+                            Returns to Frontend
+```
+
+### Benefits of Separation
+
+1. **Dependency Isolation**: Resolve anyio version conflicts
+2. **Independent Scaling**: Agent service can scale separately
+3. **Easier Updates**: Update Strands without affecting main API
+4. **Cost Optimization**: Agent service only runs when needed
+5. **Fault Isolation**: Agent failures don't crash main API
+
+### Agent Workflow
+
+1. **Request Received**: FastAPI backend receives chat request with session ID
+2. **History Loading**: Backend loads conversation history from DynamoDB
+3. **Agent Invocation**: Backend calls Agent Service Lambda with messages
+4. **Tool Registration**: Comprehensive tools registered with agent:
+   - **Profile Tools**: `get_about_me()`, `get_skills()`, `get_education()`
+   - **Experience Tools**: `get_work_experience()`, `get_experience_details()`
+   - **Project Tools**: `search_projects()`, `get_project_details()`, `list_all_projects()`
+   - **Blog Tools**: `search_blog_posts()`, `get_blog_post()`, `list_recent_blog_posts()`, `get_blog_posts_by_tag()`
+   - **General Tools**: `get_contact_info()`, `get_resume_summary()`
+5. **Agent Processing**: Agent Service processes request:
+   - Initializes Strands Agent with tools
+   - Invokes LLM with user message + context + tools
+6. **LLM Orchestration**: Model intelligently decides whether to:
+   - Use tools to gather specific information (e.g., search blog posts about "AI")
+   - Respond directly based on conversation context
+   - Chain multiple tool calls (e.g., get projects → get project details)
+   - Combine information from multiple sources
+7. **Tool Execution**: Custom tools query DynamoDB for portfolio data
+8. **Response Generation**: Agent returns structured response to Backend
+9. **Persistence**: Backend saves conversation to DynamoDB
+10. **Return**: Backend API sends response to frontend
+
+### Model Provider Configuration
+
+The agent can be configured to use different providers:
+
+```python
+# Amazon Bedrock (default, recommended for Lambda)
+agent = Agent(
+    model="bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0",
+    tools=[get_portfolio_info, get_experience, get_project_details]
+)
+
+# OpenAI
+agent = Agent(
+    model="openai/gpt-4o",
+    api_key=secrets_manager.get_secret("openai-api-key"),
+    tools=[...]
+)
+
+# Anthropic
+agent = Agent(
+    model="anthropic/claude-3-5-sonnet-20241022",
+    api_key=secrets_manager.get_secret("anthropic-api-key"),
+    tools=[...]
+)
+```
+
+### Benefits for Personal AI Assistant
+
+- **Intelligent Tool Use**: Agent automatically decides which tools to use based on user queries
+  - "Tell me about your latest blog post" → Uses `list_recent_blog_posts()`
+  - "What projects use Python?" → Uses `search_projects(query="Python")`
+  - "Where did you work before?" → Uses `get_work_experience()`
+- **Context Awareness**: Built-in conversation memory maintains multi-turn context
+  - User: "What's your latest project?"
+  - Agent: Uses `list_all_projects()` → Returns "ProjectX"
+  - User: "Tell me more about it"
+  - Agent: Knows "it" refers to ProjectX → Uses `get_project_details("ProjectX")`
+- **Flexible Responses**: Can combine multiple data sources in one response
+  - "What's your background?" → Combines `get_about_me()` + `get_work_experience()` + `get_education()`
+- **Easy Extension**: Add new tools without refactoring
+  - Future: Newsletter subscription, meeting scheduler, recommendation system
+- **Provider Flexibility**: Switch LLM providers without changing application code
+- **Smart Search**: Natural language search across projects and blog posts
+- **Comprehensive Coverage**: Single agent handles all personal information queries
+
 ## Next Steps After MVP
 
 1. **Admin Dashboard**: Build UI for managing blog posts and content
@@ -449,27 +714,32 @@ If issues occur:
 3. **Advanced Analytics**: Dashboard for viewing metrics
 4. **Authentication**: Add JWT-based auth for admin endpoints (using python-jose)
 5. **Rate Limiting**: Implement distributed rate limiting with DynamoDB
-6. **MCP Integration**: Connect to MCP server for AI agent context
-7. **Automated Testing**: Unit tests with pytest, integration tests with httpx
-8. **CI/CD Pipeline**: GitHub Actions for automated deployment
-9. **Type Checking**: Add mypy for static type checking
-10. **API Documentation**: Automatic OpenAPI docs via FastAPI (available at /docs)
+6. **Multi-Agent Patterns**: Explore agent handoffs (e.g., general chat → technical deep-dive)
+7. **MCP Tool Expansion**: Integrate additional MCP tools from marketplace
+8. **Automated Testing**: Unit tests with pytest, integration tests with httpx
+9. **CI/CD Pipeline**: GitHub Actions for automated deployment
+10. **Type Checking**: Add mypy for static type checking
+11. **Agent Observability**: Implement Strands tracing and monitoring
+12. **API Documentation**: Automatic OpenAPI docs via FastAPI (available at /docs)
 
 ## Summary
 
-This plan creates a production-ready serverless backend using **FastAPI** that:
+This plan creates a production-ready serverless backend using **FastAPI + Strands Agents** that:
 - ✅ Handles AI chat requests with session persistence (async support for better performance)
+- ✅ **Multi-agent AI orchestration** via Strands Agents SDK
+- ✅ **Model-agnostic**: Switch between Amazon Bedrock, OpenAI, Anthropic, Gemini without code changes
 - ✅ Serves dynamic content from DynamoDB
 - ✅ Tracks analytics and usage metrics
 - ✅ Deploys to AWS Lambda with easy one-command deployment
 - ✅ Fixes critical security vulnerability (hardcoded API key)
 - ✅ Scales automatically with pay-per-use pricing
-- ✅ Supports future MCP server integration
+- ✅ **Built-in MCP (Model Context Protocol) support** for tool integration
 - ✅ Maintains existing frontend functionality
 - ✅ Automatic API documentation via OpenAPI/Swagger at `/docs`
 - ✅ Type safety with Pydantic models and Python type hints
 - ✅ Fast performance with async/await support
 - ✅ Built-in request/response validation
+- ✅ **Production-ready**: Strands used by AWS Q Developer and AWS Glue
 
 **Why FastAPI?**
 - Modern async Python framework perfect for serverless
@@ -478,6 +748,16 @@ This plan creates a production-ready serverless backend using **FastAPI** that:
 - Excellent performance (comparable to Node.js/Go)
 - Great developer experience with type hints
 - Native support for async AI API calls
+
+**Why Strands Agents?**
+- **Model-Driven Orchestration**: LLM handles planning and task orchestration
+- **Provider Agnostic**: Use any LLM (Bedrock, OpenAI, Anthropic, Gemini, local models)
+- **AWS Native**: Built by AWS teams, optimized for Lambda, Bedrock, and AWS services
+- **Battle-Tested**: Used in production by AWS Q Developer and AWS Glue
+- **MCP Integration**: Access thousands of pre-built tools via Model Context Protocol
+- **Multi-Agent Ready**: Simple primitives for agent handoffs, swarms, and workflows
+- **Minimal Code**: Build sophisticated agents in just a few lines
+- **Built-in Features**: Conversation memory, session management, observability, safety guardrails
 
 **Estimated Implementation Time**: 2-3 days for MVP (chat + content APIs)
 **Estimated Cost**: $3-5/month (dev), $20-30/month (prod)
