@@ -21,15 +21,15 @@ app = FastAPI(
 )
 
 # CORS configuration
-origins = [
-    "https://sushensatturu.com",
-    "http://localhost:3000",
-    "http://localhost:3001",
-]
+# origins = [
+#     "https://sushensatturu.com",
+#     "http://localhost:3000",
+#     "http://localhost:3001",
+# ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # allow all origins temporarily
     allow_credentials=False,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],

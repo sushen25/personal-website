@@ -15,7 +15,7 @@ class ChatMessage(BaseModel):
     timestamp: Optional[float] = Field(None, description="Unix timestamp")
 
 
-class ChatRequest(BaseModel):
+class cChatRequest(BaseModel):
     """Chat request model."""
     session_id: Optional[str] = Field(None, description="Session ID for conversation continuity")
     messages: List[ChatMessage] = Field(..., description="List of chat messages")
