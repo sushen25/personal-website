@@ -4,7 +4,7 @@ Custom tools for project queries.
 
 from strands import tool
 from typing import List, Dict, Any, Optional
-from src.services.content_service import content_service
+from services.content_service import content_service
 
 
 @tool

@@ -4,7 +4,7 @@ All tools are exported here for easy import.
 """
 
 # Profile tools
-from src.tools.profile_tools import (
+from tools.profile_tools import (
     get_about_me,
     get_skills,
     get_education,
@@ -15,7 +15,7 @@ from src.tools.profile_tools import (
 )
 
 # Blog tools
-from src.tools.blog_tools import (
+from tools.blog_tools import (
     search_blog_posts,
     get_blog_post,
     list_recent_blog_posts,
@@ -23,7 +23,7 @@ from src.tools.blog_tools import (
 )
 
 # Project tools
-from src.tools.project_tools import (
+from tools.project_tools import (
     search_projects,
     get_project_details,
     list_all_projects,

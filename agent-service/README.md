@@ -11,12 +11,16 @@ The service is invoked directly by the Backend API Lambda function (not exposed 
 ## Architecture
 
 - **Framework**: Strands Agents SDK
-- **Runtime**: Python 3.11
+- **Runtime**: Python 3.11 (ARM64 architecture)
 - **Deployment**: AWS Lambda via Serverless Framework
 - **Region**: ap-southeast-2 (Sydney)
+- **Memory**: 512 MB
+- **Timeout**: 30 seconds
 - **LLM Providers**: Amazon Bedrock (default), OpenAI, Anthropic, Gemini
 - **Database**: DynamoDB (for tool data access)
 - **Secrets**: AWS Secrets Manager (for API keys)
+
+**Note**: Python 3.11 is used instead of 3.12 due to OpenTelemetry compatibility issues with Strands Agents.
 
 ## Prerequisites
 
@@ -49,9 +53,6 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install Python dependencies
 pip install -r requirements.txt
-
-# Install Serverless plugins
-serverless plugin install -n serverless-python-requirements
 ```
 
 ### 2. Configure AWS Credentials
@@ -66,33 +67,7 @@ aws configure
 # Default output format: json
 ```
 
-### 3. Set Up Secrets Manager (Optional)
-
-If using non-Bedrock providers, store API keys in AWS Secrets Manager:
-
-```bash
-# For OpenAI (if not using Bedrock)
-aws secretsmanager create-secret \
-  --name dev/portfolio/openai-api-key \
-  --secret-string "your-openai-api-key" \
-  --region ap-southeast-2
-
-# For Anthropic (if not using Bedrock)
-aws secretsmanager create-secret \
-  --name dev/portfolio/anthropic-api-key \
-  --secret-string "your-anthropic-api-key" \
-  --region ap-southeast-2
-
-# For Gemini (if not using Bedrock)
-aws secretsmanager create-secret \
-  --name dev/portfolio/gemini-api-key \
-  --secret-string "your-gemini-api-key" \
-  --region ap-southeast-2
-```
-
-**Note**: Amazon Bedrock (default) doesn't require API keys - it uses IAM roles for authentication.
-
-### 4. Ensure DynamoDB Tables Exist
+### 3. Ensure DynamoDB Tables Exist
 
 The agent service needs access to DynamoDB tables for tool queries:
 - `{stage}-portfolio-blog-posts` (for blog tools)
@@ -282,15 +257,16 @@ Monitor your Lambda function in AWS CloudWatch:
 1. **Docker not running**: The `serverless-python-requirements` plugin requires Docker for packaging dependencies. Ensure Docker is running.
 
 2. **Permission errors**: Ensure your AWS credentials have permissions for:
-   - Lambda
-   - DynamoDB
-   - Secrets Manager
-   - IAM (for role creation)
-   - Bedrock (if using Bedrock models)
+   - Lambda (CreateFunction, UpdateFunctionCode, etc.)
+   - DynamoDB (Query, Scan, GetItem, etc.)
+   - Secrets Manager (GetSecretValue)
+   - IAM (for role creation and policy attachment)
+   - Bedrock (InvokeModel, InvokeModelWithResponseStream)
 
 3. **Bedrock access denied**: If using Bedrock, ensure:
-   - Your IAM role has `bedrock:InvokeModel` permission
-   - The model is enabled in your AWS account (Bedrock console)
+   - Your Lambda IAM role has `bedrock:InvokeModel` and `bedrock:InvokeModelWithResponseStream` permissions
+   - The Claude 3.5 Sonnet model is enabled in your AWS account (Bedrock console)
+   - You are deploying in a region that supports Bedrock (e.g., us-east-1, us-west-2, ap-southeast-2)
 
 4. **Agent Service not found by backend**: Ensure:
    - Agent service is deployed
@@ -343,6 +319,22 @@ serverless rollback --timestamp <timestamp> --stage dev
 **Note**: Bedrock pricing varies by model. Claude 3.5 Sonnet is cost-effective for production use.
 
 ## Architecture Notes
+
+### Lambda Deployment Strategy
+
+This service follows the **Strands Agents Lambda deployment guide** best practices:
+
+- **Python 3.11 Runtime**: Required for Strands Agents compatibility (Python 3.12 has OpenTelemetry issues)
+- **ARM64 Architecture**: More cost-effective than x86_64 (up to 34% better price-performance)
+- **Optimized Memory**: 512 MB provides good balance between cost and performance
+- **30 Second Timeout**: Sufficient for most agent interactions without incurring excess costs
+- **Lambda Layers**: Dependencies packaged separately for faster deployments
+- **IAM Permissions**: Explicitly granted for Bedrock, DynamoDB, and Secrets Manager
+- **OpenTelemetry Disabled**: Environment variables set to prevent telemetry overhead
+
+**Important Notes**:
+- This deployment does not implement response streaming (available in AWS Fargate deployments). Responses are returned as complete strings.
+- Python 3.11 is required due to OpenTelemetry compatibility issues in Strands Agents with Python 3.12.
 
 ### Why Separate Service?
 

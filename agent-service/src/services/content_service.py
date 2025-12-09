@@ -5,7 +5,7 @@ This service provides data for the Strands Agent tools.
 
 from typing import List, Dict, Any, Optional
 from boto3.dynamodb.conditions import Key, Attr
-from src.utils.dynamodb import blog_db
+from utils.dynamodb import blog_db
 
 
 class ContentService:

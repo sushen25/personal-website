@@ -8,6 +8,7 @@ venv/
 env/
 ENV/
 .venv
+node_modules/
 
 # Distribution / packaging
 build/

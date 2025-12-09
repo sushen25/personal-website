@@ -6,8 +6,8 @@ background, skills, projects, and blog content.
 """
 from typing import Optional
 from strands import Agent
-from src.services.content_service import content_service
-from src.tools import (
+from services.content_service import content_service
+from tools import (
     # Profile tools
     get_about_me,
     get_skills,
@@ -28,7 +28,7 @@ from src.tools import (
 )
 
 
-def create_personal_assistant(model_provider: str = "bedrock", api_key: Optional[str] = None) -> Agent:
+def create_personal_assistant() -> Agent:
     """
     Create and configure the personal assistant agent.
 
@@ -105,8 +105,7 @@ Your goal is to provide accurate, helpful, and engaging information about {about
 
     # Create agent with model and tools
     agent = Agent(
-        model="bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0",
-        system=system_prompt,
+        system_prompt=system_prompt,
         tools=tools,
     )
 
