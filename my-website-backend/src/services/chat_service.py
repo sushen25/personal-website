@@ -21,7 +21,6 @@ class ChatService:
         self,
         session_id: str,
         messages: List[ChatMessage],
-        model_provider: str = "bedrock"
     ) -> ChatResponse:
         """
         Send a message to the agent and save the conversation.
@@ -29,7 +28,6 @@ class ChatService:
         Args:
             session_id: Conversation session ID
             messages: List of chat messages
-            model_provider: AI model provider to use
 
         Returns:
             ChatResponse with agent's reply and metadata
@@ -44,7 +42,6 @@ class ChatService:
             agent_response = await agent_client.invoke_agent(
                 session_id=session_id,
                 messages=messages,
-                model_provider=model_provider
             )
 
             # Parse agent response

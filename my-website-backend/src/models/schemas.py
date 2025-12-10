@@ -15,11 +15,11 @@ class ChatMessage(BaseModel):
     timestamp: Optional[float] = Field(None, description="Unix timestamp")
 
 
-class cChatRequest(BaseModel):
+class ChatRequest(BaseModel):
     """Chat request model."""
     session_id: Optional[str] = Field(None, description="Session ID for conversation continuity")
     messages: List[ChatMessage] = Field(..., description="List of chat messages")
-    model_provider: Optional[str] = Field("bedrock", description="AI model provider: bedrock, openai, anthropic")
+    model_provider: Optional[str] = Field(None, description="AI model provider (bedrock, openai, anthropic)")
 
     class Config:
         json_schema_extra = {

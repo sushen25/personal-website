@@ -15,6 +15,10 @@ provider:
     BLOG_POSTS_TABLE: ${self:provider.stage}-portfolio-blog-posts
     ANALYTICS_TABLE: ${self:provider.stage}-portfolio-analytics
     PYTHONPATH: /var/task:/opt/python
+    # Agent Service URL - will be set based on deployment
+    # For local dev, use http://localhost:8080
+    # For production, use the deployed agent service URL
+    AGENT_SERVICE_URL: ${env:AGENT_SERVICE_URL, 'http://localhost:8080'}
   iam:
     role:
       statements:
@@ -226,3 +230,6 @@ resources:
     #   Description: Analytics DynamoDB Table Name
     #   Value:
     #     Ref: AnalyticsTable
+
+plugins:
+  - serverless-offline

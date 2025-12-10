@@ -31,11 +31,6 @@ from tools import (
 def create_personal_assistant() -> Agent:
     """
     Create and configure the personal assistant agent.
-
-    Args:
-        model_provider: Model provider to use ("bedrock", "openai", "anthropic", "gemini")
-        api_key: Optional API key (if not using Bedrock or if needed for provider)
-
     Returns:
         Configured Strands Agent instance
     """

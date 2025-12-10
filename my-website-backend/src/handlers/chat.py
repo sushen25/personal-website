@@ -14,7 +14,7 @@ from src.middleware.error_handler import NotFoundError, ValidationError
 router = APIRouter()
 
 
-@router.post("/", response_model=ChatResponse, status_code=status.HTTP_200_OK)
+@router.post("", response_model=ChatResponse, status_code=status.HTTP_200_OK)
 async def send_message(request: ChatRequest) -> ChatResponse:
     """
     Send a chat message and get AI assistant response.
@@ -44,10 +44,8 @@ async def send_message(request: ChatRequest) -> ChatResponse:
         # Send message to chat service
         response = await chat_service.send_message(
             session_id=session_id,
-            messages=request.messages,
-            model_provider=request.model_provider or "bedrock"
+            messages=request.messages
         )
-
         return response
 
     except Exception as e:
@@ -56,94 +54,4 @@ async def send_message(request: ChatRequest) -> ChatResponse:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to process chat message: {str(e)}"
-        )
-
-
-@router.get("/session/{session_id}", response_model=ConversationHistory, status_code=status.HTTP_200_OK)
-async def get_conversation_history(session_id: str) -> ConversationHistory:
-    """
-    Retrieve conversation history for a session.
-
-    Args:
-        session_id: Session identifier
-
-    Returns:
-        ConversationHistory with all messages
-
-    Raises:
-        NotFoundError: If session not found
-    """
-    try:
-        history = await chat_service.get_conversation_history(session_id)
-
-        if not history or len(history.messages) == 0:
-            raise NotFoundError(
-                message=f"No conversation found for session: {session_id}",
-                detail={"session_id": session_id}
-            )
-
-        return history
-
-    except NotFoundError:
-        raise
-    except Exception as e:
-        print(f"Error retrieving conversation history: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to retrieve conversation history: {str(e)}"
-        )
-
-
-@router.delete("/session/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_conversation(session_id: str):
-    """
-    Delete a conversation session.
-
-    Args:
-        session_id: Session identifier
-
-    Returns:
-        204 No Content on success
-    """
-    try:
-        success = await chat_service.delete_conversation(session_id)
-
-        if not success:
-            raise NotFoundError(
-                message=f"Session not found: {session_id}",
-                detail={"session_id": session_id}
-            )
-
-        return None
-
-    except NotFoundError:
-        raise
-    except Exception as e:
-        print(f"Error deleting conversation: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to delete conversation: {str(e)}"
-        )
-
-
-@router.get("/sessions", response_model=List[str], status_code=status.HTTP_200_OK)
-async def list_sessions(limit: int = 10) -> List[str]:
-    """
-    List recent session IDs.
-
-    Args:
-        limit: Maximum number of sessions to return
-
-    Returns:
-        List of session IDs
-    """
-    try:
-        sessions = await chat_service.list_sessions(limit=limit)
-        return sessions
-
-    except Exception as e:
-        print(f"Error listing sessions: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to list sessions: {str(e)}"
         )

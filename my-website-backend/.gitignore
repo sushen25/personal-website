@@ -9,6 +9,8 @@ env/
 ENV/
 .venv
 
+.serverless
+
 # Node  
 node_modules/
 

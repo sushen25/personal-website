@@ -1,6 +1,3 @@
-import json
-import os
-from typing import Dict, Any, List, Optional
 from agent.personal_assistant import create_personal_assistant
 
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
