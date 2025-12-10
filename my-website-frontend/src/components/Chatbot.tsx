@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
     role: 'user' | 'assistant';
     content: string;
+    timestamp?: number;
 }
 
 export default function Chatbot() {
@@ -17,6 +19,7 @@ export default function Chatbot() {
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [sessionId, setSessionId] = useState<string>('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -39,34 +42,61 @@ export default function Chatbot() {
 
         const userMessage = input.trim();
         setInput('');
-        setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+
+        // Add user message to the chat
+        const newUserMessage: Message = {
+            role: 'user',
+            content: userMessage,
+            timestamp: Date.now() / 1000
+        };
+        setMessages(prev => [...prev, newUserMessage]);
         setIsLoading(true);
 
         try {
             // Get the API endpoint from environment variable or use a default
-            const apiEndpoint = process.env.NEXT_PUBLIC_CHAT_API_URL || '/api/chat';
-            
+            const apiEndpoint = 'http://localhost:3000/dev/api/chat/';
+
+            // Prepare the request payload matching backend schema
+            const requestBody = {
+                messages: [...messages, newUserMessage].map(msg => ({
+                    role: msg.role,
+                    content: msg.content,
+                    ...(msg.timestamp && { timestamp: msg.timestamp })
+                })),
+                ...(sessionId && { session_id: sessionId })
+            };
+
             const response = await fetch(apiEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    messages: [...messages, { role: 'user', content: userMessage }],
-                }),
+                body: JSON.stringify(requestBody),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to get response');
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Failed to get response');
             }
 
             const data = await response.json();
-            setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
+
+            // Update session ID if this is the first message
+            if (data.session_id && !sessionId) {
+                setSessionId(data.session_id);
+            }
+
+            // Add assistant's response to messages
+            setMessages(prev => [...prev, {
+                role: 'assistant',
+                content: data.message.content,
+                timestamp: data.message.timestamp
+            }]);
         } catch (error) {
             console.error('Error sending message:', error);
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: "I'm sorry, I encountered an error. Please make sure the API endpoint is configured correctly."
+                content: "I'm sorry, I encountered an error. Please make sure the backend API is running and configured correctly."
             }]);
         } finally {
             setIsLoading(false);
@@ -101,9 +131,8 @@ export default function Chatbot() {
 
             {/* Chat Panel */}
             <div
-                className={`fixed right-0 top-0 h-full w-full md:w-96 bg-white dark:bg-gray-900 shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${
-                    isOpen ? 'translate-x-0' : 'translate-x-full'
-                } flex flex-col`}
+                className={`fixed right-0 top-0 h-full w-full md:w-96 bg-white dark:bg-gray-900 shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+                    } flex flex-col`}
             >
                 {/* Header */}
                 <div className="bg-blue-600 text-white p-4 flex items-center justify-between">
@@ -137,13 +166,18 @@ export default function Chatbot() {
                             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                             <div
-                                className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                                    message.role === 'user'
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
-                                }`}
+                                className={`max-w-[80%] rounded-lg px-4 py-2 ${message.role === 'user'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                                    }`}
                             >
-                                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                                {message.role === 'user' ? (
+                                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                                ) : (
+                                    <div className="text-sm prose prose-sm dark:prose-invert max-w-none prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-headings:my-2">
+                                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}

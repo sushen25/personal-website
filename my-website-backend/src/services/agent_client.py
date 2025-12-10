@@ -58,10 +58,8 @@ class AgentClient:
         # Prepare payload for agentcore runtime
         # The runtime expects: {"input": {"prompt": "..."}}
         payload = {
-            "input": {
-                "prompt": latest_user_message,
-                "session_id": session_id,
-            }
+            "prompt": latest_user_message,
+            "session_id": session_id
         }
 
         try:
