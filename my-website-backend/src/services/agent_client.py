@@ -48,49 +48,38 @@ class AgentClient:
         Raises:
             Exception: If agent invocation fails
         """
-        # Get the latest user message for the prompt
         user_messages = [msg for msg in messages if msg.role == "user"]
         if not user_messages:
             raise Exception("No user message found in messages list")
 
         latest_user_message = user_messages[-1].content
 
-        # Prepare payload for agentcore runtime
-        # The runtime expects: {"input": {"prompt": "..."}}
         payload = {
             "prompt": latest_user_message,
             "session_id": session_id
         }
 
         try:
-            # Get HTTP client
             http_client = self._get_http_client()
 
-            # Make HTTP POST request to agentcore runtime
             response = await http_client.post(
                 f"{self.agent_url}/invocations",
                 json=payload,
                 headers={"Content-Type": "application/json"}
             )
 
-            # Check HTTP status
             if response.status_code != 200:
                 error_detail = response.text
                 raise Exception(f"Agent service returned status {response.status_code}: {error_detail}")
 
-            # Parse response
             response_data = response.json()
 
-            # The agentcore runtime returns: {"result": {"role": "assistant", "content": [{"text": "..."}]}}
-            # We need to transform it to match expected format
             if "result" in response_data:
                 result = response_data["result"]
 
-                # Extract text content from the result
                 content_text = ""
                 if isinstance(result, dict):
                     if "content" in result and isinstance(result["content"], list):
-                        # Extract text from content blocks
                         for block in result["content"]:
                             if isinstance(block, dict) and "text" in block:
                                 content_text += block["text"]
@@ -142,14 +131,12 @@ class AgentClient:
         """
         http_client = self._get_http_client()
         try:
-            # Try to ping the health endpoint (or just the base URL)
             response = await http_client.get(
                 f"{self.agent_url}/ping",
                 timeout=5.0
             )
             return response.status_code == 200
         except Exception:
-            # If ping endpoint doesn't exist, try invocations with a simple test
             try:
                 response = await http_client.post(
                     f"{self.agent_url}/invocations",
@@ -159,6 +146,79 @@ class AgentClient:
                 return response.status_code == 200
             except Exception:
                 return False
+
+    async def invoke_agent_stream(
+        self,
+        session_id: str,
+        messages: List[ChatMessage],
+    ):
+        """
+        Invoke the Agent Service with streaming support.
+
+        Args:
+            session_id: Conversation session ID
+            messages: List of chat messages
+
+        Yields:
+            Dictionary events from the agent as they arrive
+
+        Raises:
+            Exception: If agent invocation fails
+        """
+        user_messages = [msg for msg in messages if msg.role == "user"]
+        if not user_messages:
+            raise Exception("No user message found in messages list")
+
+        latest_user_message = user_messages[-1].content
+
+        payload = {
+            "prompt": latest_user_message,
+            "session_id": session_id
+        }
+
+        try:
+            http_client = self._get_http_client()
+
+            async with http_client.stream(
+                "POST",
+                f"{self.agent_url}/invocations",
+                json=payload,
+                headers={"Content-Type": "application/json"},
+                timeout=httpx.Timeout(self.timeout)
+            ) as response:
+                if response.status_code != 200:
+                    error_detail = await response.aread()
+                    raise Exception(f"Agent service returned status {response.status_code}: {error_detail.decode()}")
+
+                async for line in response.aiter_lines():
+                    if line.strip():
+                        try:
+                            # Handle SSE format - lines are prefixed with "data: "
+                            if line.startswith("data: "):
+                                line = line[6:]  # Remove "data: " prefix
+
+                            event = json.loads(line)
+                            yield event
+                        except json.JSONDecodeError as e:
+                            print(f"Failed to parse event line: {line}")
+                            # Skip invalid JSON lines
+                            continue
+
+        except httpx.TimeoutException:
+            print(f"Agent service request timed out after {self.timeout}s")
+            raise Exception(f"Agent service request timed out after {self.timeout} seconds")
+
+        except httpx.ConnectError as e:
+            print(f"Failed to connect to agent service at {self.agent_url}: {str(e)}")
+            raise Exception(f"Could not connect to agent service. Is it running at {self.agent_url}?")
+
+        except httpx.HTTPError as e:
+            print(f"HTTP error calling agent service: {str(e)}")
+            raise Exception(f"Failed to invoke agent service: {str(e)}")
+
+        except Exception as e:
+            print(f"Error invoking agent service: {str(e)}")
+            raise
 
     async def close(self):
         """Close the HTTP client connection."""
