@@ -76,6 +76,34 @@ functions:
               - X-Amz-User-Agent
             allowCredentials: false
 
+  # Separate function for streaming with Lambda Function URL
+  apiStream:
+    handler: src.streaming_handler.handler
+    timeout: 300  # 5 minutes for long streaming responses
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
+    url:
+      cors:
+        allowedOrigins:
+          - '*'
+        allowedHeaders:
+          - Content-Type
+          - X-Amz-Date
+          - Authorization
+          - X-Api-Key
+          - X-Amz-Security-Token
+          - X-Amz-User-Agent
+          - Cache-Control
+          - X-Accel-Buffering
+        allowedMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowCredentials: false
+      invokeMode: RESPONSE_STREAM  # Enable response streaming
+
 custom:
   pythonRequirements:
     dockerizePip: true
@@ -222,6 +250,12 @@ resources:
       Description: Chat Conversations DynamoDB Table Name
       Value:
         Ref: ChatConversationsTable
+    ApiStreamFunctionUrl:
+      Description: Streaming API Function URL
+      Value:
+        Fn::GetAtt:
+          - ApiStreamLambdaFunctionUrl
+          - FunctionUrl
     # BlogPostsTableName:
     #   Description: Blog Posts DynamoDB Table Name
     #   Value:
