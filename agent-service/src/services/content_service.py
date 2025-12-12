@@ -19,15 +19,14 @@ class ContentService:
         Returns:
             Dictionary with profile information
         """
-        # TODO: Query DynamoDB once content is migrated (Phase 4)
-        # For now, return hardcoded data
         return {
             "name": "Sushen Satturu",
             "title": "Software Engineer",
-            "bio": "Passionate software engineer with expertise in full-stack development, AI/ML, and cloud technologies. Specializing in building scalable serverless applications and intelligent systems using modern frameworks and AWS services.",
-            "location": "Australia",
-            "email": "contact@sushensatturu.com",
-            "linkedin": "https://linkedin.com/in/sushensatturu",
+            "bio": "I'm a full-stack software engineer with a strong focus on building scalable web applications and cloud infrastructure, mostly in fast-moving startup environments. I've worked across the stack—frontend, backend, and DevOps—and enjoy taking ownership of features from idea through to production. At TeamAssurance, I've led projects used by global clients like CSL and Suntory, and helped shape core parts of the product. I'm particularly interested in how AI and machine learning can be applied to solve real-world problems, and have been experimenting with LLMs and smart integrations into existing platforms.",
+            "location": "Melbourne, VIC 3030, Australia",
+            "phone": "+61 40 678 6789",
+            "email": "sushensatturu25@gmail.com",
+            "linkedin": "https://linkedin.com/in/sushen-satturu-646403182",
             "github": "https://github.com/sushen25",
             "website": "https://sushensatturu.com"
         }
@@ -40,29 +39,23 @@ class ContentService:
         Returns:
             List of skills with categories
         """
-        # TODO: Query DynamoDB once content is migrated (Phase 4)
         return [
-            {"name": "Python", "category": "Programming Languages", "proficiency": "Expert"},
-            {"name": "TypeScript", "category": "Programming Languages", "proficiency": "Advanced"},
-            {"name": "JavaScript", "category": "Programming Languages", "proficiency": "Advanced"},
-            {"name": "Java", "category": "Programming Languages", "proficiency": "Intermediate"},
-            {"name": "React", "category": "Frontend Frameworks", "proficiency": "Advanced"},
-            {"name": "Next.js", "category": "Frontend Frameworks", "proficiency": "Advanced"},
-            {"name": "Vue.js", "category": "Frontend Frameworks", "proficiency": "Intermediate"},
-            {"name": "FastAPI", "category": "Backend Frameworks", "proficiency": "Advanced"},
-            {"name": "Express.js", "category": "Backend Frameworks", "proficiency": "Advanced"},
-            {"name": "Node.js", "category": "Backend Frameworks", "proficiency": "Advanced"},
-            {"name": "AWS", "category": "Cloud Platforms", "proficiency": "Advanced"},
-            {"name": "Lambda", "category": "Cloud Platforms", "proficiency": "Advanced"},
-            {"name": "DynamoDB", "category": "Cloud Platforms", "proficiency": "Advanced"},
-            {"name": "API Gateway", "category": "Cloud Platforms", "proficiency": "Advanced"},
-            {"name": "Strands Agents", "category": "AI/ML", "proficiency": "Advanced"},
-            {"name": "OpenAI API", "category": "AI/ML", "proficiency": "Advanced"},
-            {"name": "LangChain", "category": "AI/ML", "proficiency": "Intermediate"},
-            {"name": "Docker", "category": "DevOps Tools", "proficiency": "Advanced"},
-            {"name": "Git", "category": "DevOps Tools", "proficiency": "Expert"},
-            {"name": "Serverless Framework", "category": "DevOps Tools", "proficiency": "Advanced"},
-            {"name": "CI/CD", "category": "DevOps Tools", "proficiency": "Advanced"},
+            {"name": "React", "category": "Frontend", "proficiency": "Advanced"},
+            {"name": "Node.js", "category": "Backend", "proficiency": "Advanced"},
+            {"name": "MySQL", "category": "Databases", "proficiency": "Advanced"},
+            {"name": "PostgreSQL", "category": "Databases", "proficiency": "Advanced"},
+            {"name": "MongoDB", "category": "Databases", "proficiency": "Advanced"},
+            {"name": "Cassandra", "category": "Databases", "proficiency": "Intermediate"},
+            {"name": "Neo4J", "category": "Databases", "proficiency": "Intermediate"},
+            {"name": "AWS", "category": "Cloud & Infrastructure", "proficiency": "Advanced"},
+            {"name": "Application Integrations", "category": "Integration & APIs", "proficiency": "Advanced"},
+            {"name": "Webhooks", "category": "Integration & APIs", "proficiency": "Advanced"},
+            {"name": "IoT Devices", "category": "Integration & APIs", "proficiency": "Intermediate"},
+            {"name": "LLM Development", "category": "AI/ML", "proficiency": "Advanced"},
+            {"name": "AI", "category": "AI/ML", "proficiency": "Advanced"},
+            {"name": "Machine Learning", "category": "AI/ML", "proficiency": "Intermediate"},
+            {"name": "Requirements Gathering", "category": "Soft Skills", "proficiency": "Advanced"},
+            {"name": "Client Communication", "category": "Soft Skills", "proficiency": "Advanced"},
         ]
 
     @staticmethod
@@ -73,19 +66,31 @@ class ContentService:
         Returns:
             List of education entries
         """
-        # TODO: Query DynamoDB once content is migrated (Phase 4)
         return [
             {
-                "institution": "University Name",
-                "degree": "Bachelor of Science",
+                "institution": "University",
+                "degree": "Bachelor of Computer Science",
                 "field_of_study": "Computer Science",
-                "start_date": "2015",
-                "end_date": "2019",
-                "gpa": "3.8/4.0",
-                "honors": [
-                    "Dean's List",
-                    "Honors Graduate",
-                    "Computer Science Achievement Award"
+                "start_date": "2018",
+                "end_date": "2021",
+                "honors": ["Graduated with honors"],
+                "coursework": [
+                    "Data Structures and Algorithms",
+                    "Web Development",
+                    "Database Systems"
+                ]
+            },
+            {
+                "institution": "University",
+                "degree": "Bachelor of Commerce",
+                "field_of_study": "Commerce",
+                "start_date": "2018",
+                "end_date": "2021",
+                "coursework": [
+                    "Finance",
+                    "Economics",
+                    "Business Law",
+                    "Marketing"
                 ]
             }
         ]
@@ -98,30 +103,34 @@ class ContentService:
         Returns:
             List of work experience entries
         """
-        # TODO: Query DynamoDB once content is migrated (Phase 4)
         return [
             {
-                "company": "Tech Company",
-                "role": "Senior Software Engineer",
-                "start_date": "2022-01",
+                "company": "TeamAssurance",
+                "role": "Software Engineer",
+                "start_date": "2024",
                 "end_date": None,  # Current position
-                "description": "Leading development of cloud-native applications",
-                "technologies": ["Python", "AWS", "React", "TypeScript"],
+                "description": "Full-stack development in a fast-paced startup environment, working with global clients including CSL, Suntory, and Pact.",
+                "technologies": ["React", "Node.js", "AWS", "Full-Stack"],
                 "achievements": [
-                    "Architected and deployed serverless backend handling 1M+ requests/month",
-                    "Reduced infrastructure costs by 40% through optimization"
+                    "Develop and maintain full-stack applications in a fast-paced startup environment",
+                    "Design and implement cloud infrastructure solutions using AWS",
+                    "Collaborate with global clients including CSL, Suntory, and Pact",
+                    "Lead cross-functional development across UI, backend, and DevOps domains",
+                    "Led projects used by global clients and helped shape core parts of the product"
                 ]
             },
             {
-                "company": "Previous Company",
+                "company": "WSP",
                 "role": "Software Engineer",
-                "start_date": "2019-06",
-                "end_date": "2021-12",
-                "description": "Full-stack development of web applications",
-                "technologies": ["JavaScript", "Node.js", "React", "MongoDB"],
+                "start_date": "2021",
+                "end_date": "2024",
+                "description": "Delivered end-to-end software solutions for major clients, including the Australian Defence Force and Transport New South Wales.",
+                "technologies": ["Full-Stack", "Agile", "DevOps"],
                 "achievements": [
-                    "Developed e-commerce platform serving 50K+ users",
-                    "Implemented CI/CD pipeline reducing deployment time by 60%"
+                    "Delivered end-to-end software solutions for major clients, including the Australian Defence Force and Transport New South Wales",
+                    "Led technical mentorship program for interns and junior developers",
+                    "Ensured high-quality project delivery within strict timelines and requirements",
+                    "Implemented agile development methodologies to optimize team productivity"
                 ]
             }
         ]
@@ -154,7 +163,6 @@ class ContentService:
         Returns:
             List of project summaries
         """
-        # TODO: Query DynamoDB once content is migrated (Phase 4)
         return [
             {
                 "project_id": "1",
