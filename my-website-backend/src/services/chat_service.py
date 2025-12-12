@@ -198,6 +198,88 @@ class ChatService:
             print(f"Error listing sessions: {str(e)}")
             return []
 
+    async def send_message_stream(
+        self,
+        session_id: str,
+        messages: List[ChatMessage],
+    ):
+        """
+        Send a message to the agent and stream the response.
+
+        Args:
+            session_id: Conversation session ID
+            messages: List of chat messages
+
+        Yields:
+            Dictionary events from the agent as they arrive
+
+        Raises:
+            AgentServiceError: If agent service fails
+        """
+        start_time = time.time()
+        accumulated_content = ""
+
+        try:
+            async for event in agent_client.invoke_agent_stream(
+                session_id=session_id,
+                messages=messages
+            ):
+                text_delta = None
+
+                if "event" in event:
+                    event_data = event["event"]
+                    if "contentBlockDelta" in event_data:
+                        delta = event_data["contentBlockDelta"].get("delta", {})
+                        text_delta = delta.get("text", "")
+                elif "data" in event:
+                    text_delta = event["data"]
+
+                # Accumulate text content for saving later
+                if text_delta:
+                    accumulated_content += text_delta
+
+                    # Transform event to simple format for frontend
+                    transformed_event = {
+                        "data": text_delta,
+                        "type": "content_block_delta"
+                    }
+                    yield transformed_event
+                else:
+                    yield event
+
+            response_time_ms = int((time.time() - start_time) * 1000)
+
+            assistant_message = ChatMessage(
+                role="assistant",
+                content=accumulated_content,
+                timestamp=time.time()
+            )
+
+            metadata = {
+                'response_time_ms': response_time_ms,
+                'session_id': session_id
+            }
+
+            # TODO: Save to DynamoDB
+            # await self._save_messages(
+            #     session_id=session_id,
+            #     messages=messages + [assistant_message],
+            #     metadata=metadata
+            # )
+
+            yield {
+                "complete": True,
+                "session_id": session_id
+            }
+
+        except Exception as e:
+            print(f"Error in send_message_stream: {str(e)}")
+            # Yield error event
+            yield {
+                "error": str(e),
+                "session_id": session_id
+            }
+
     async def _save_messages(
         self,
         session_id: str,
