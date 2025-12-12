@@ -20,6 +20,7 @@ export default function Chatbot() {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [sessionId, setSessionId] = useState<string>('');
+    const [useStreaming, setUseStreaming] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -37,7 +38,7 @@ export default function Chatbot() {
         }
     }, [isOpen]);
 
-    const handleSend = async () => {
+    const handleSendNonStream = async () => {
         if (!input.trim() || isLoading) return;
 
         const userMessage = input.trim();
@@ -56,7 +57,6 @@ export default function Chatbot() {
             // Get the API endpoint from environment variable or use a default
             const apiEndpoint = 'http://localhost:3000/dev/api/chat/';
 
-            // Prepare the request payload matching backend schema
             const requestBody = {
                 messages: [...messages, newUserMessage].map(msg => ({
                     role: msg.role,
@@ -81,12 +81,10 @@ export default function Chatbot() {
 
             const data = await response.json();
 
-            // Update session ID if this is the first message
             if (data.session_id && !sessionId) {
                 setSessionId(data.session_id);
             }
 
-            // Add assistant's response to messages
             setMessages(prev => [...prev, {
                 role: 'assistant',
                 content: data.message.content,
@@ -100,6 +98,112 @@ export default function Chatbot() {
             }]);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleSendStream = async () => {
+        if (!input.trim() || isLoading) return;
+
+        const userMessage = input.trim();
+        setInput('');
+
+        const newUserMessage: Message = {
+            role: 'user',
+            content: userMessage,
+            timestamp: Date.now() / 1000
+        };
+        setMessages(prev => [...prev, newUserMessage]);
+        setIsLoading(true);
+
+        const assistantMessageIndex = messages.length + 1;
+        setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: '',
+            timestamp: Date.now() / 1000
+        }]);
+
+        try {
+            const apiEndpoint = 'http://localhost:8001/api/chat/stream';
+            const requestBody = {
+                messages: [...messages, newUserMessage].map(msg => ({
+                    role: msg.role,
+                    content: msg.content,
+                    ...(msg.timestamp && { timestamp: msg.timestamp })
+                })),
+                ...(sessionId && { session_id: sessionId })
+            };
+
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to get streaming response');
+            }
+
+            // Read the stream
+            const reader = response.body?.getReader();
+            const decoder = new TextDecoder();
+            let accumulatedContent = '';
+
+            if (reader) {
+                while (true) {
+                    const { done, value } = await reader.read();
+
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.trim()) {
+                            try {
+                                const event = JSON.parse(line);
+
+                                if (event.data) {
+                                    accumulatedContent += event.data;
+
+                                    setMessages(prev => {
+                                        const updated = [...prev];
+                                        updated[assistantMessageIndex] = {
+                                            role: 'assistant',
+                                            content: accumulatedContent,
+                                            timestamp: Date.now() / 1000
+                                        };
+                                        return updated;
+                                    });
+                                } else if (event.error) {
+                                    throw new Error(event.error);
+                                } else if (event.session_id && !sessionId) {
+                                    setSessionId(event.session_id);
+                                }
+                            } catch (e) {
+                                console.error('Error parsing event:', e);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            setMessages(prev => [...prev.slice(0, -1), {
+                role: 'assistant',
+                content: "I'm sorry, I encountered an error. Please try again."
+            }]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSend = async () => {
+        if (useStreaming) {
+            return handleSendStream();
+        } else {
+            return handleSendNonStream();
         }
     };
 
