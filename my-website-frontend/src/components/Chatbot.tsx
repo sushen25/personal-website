@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
     role: 'user' | 'assistant';
@@ -165,7 +166,7 @@ export default function Chatbot() {
                                 const event = JSON.parse(line);
 
                                 if (event.data) {
-                                    accumulatedContent += event.data;
+                                    accumulatedContent += event.data.split("\n").join(" \n");
 
                                     setMessages(prev => {
                                         const updated = [...prev];
@@ -235,7 +236,7 @@ export default function Chatbot() {
 
             {/* Chat Panel */}
             <div
-                className={`fixed right-0 top-0 h-full w-full md:w-96 bg-white dark:bg-gray-900 shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+                className={`fixed right-0 top-0 h-full w-full md:w-[600px] lg:w-[700px] xl:w-[800px] bg-white dark:bg-gray-900 shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
                     } flex flex-col`}
             >
                 {/* Header */}
@@ -278,8 +279,16 @@ export default function Chatbot() {
                                 {message.role === 'user' ? (
                                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                                 ) : (
-                                    <div className="text-sm prose prose-sm dark:prose-invert max-w-none prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-1 prose-headings:my-2">
-                                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                                    <div className="text-sm prose prose-sm dark:prose-invert max-w-none prose-p:my-4 prose-ul:my-4 prose-ol:my-4 prose-li:my-2 prose-headings:my-4 prose-h1:mb-4 prose-h2:mb-3 prose-h2:mt-6 prose-h3:mb-2 prose-h3:mt-4 leading-relaxed">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                            components={{
+                                                p: ({ children }) => <p className="mb-4">{children}</p>,
+                                                br: () => <br className="my-2" />,
+                                            }}
+                                        >
+                                            {message.content}
+                                        </ReactMarkdown>
                                     </div>
                                 )}
                             </div>
