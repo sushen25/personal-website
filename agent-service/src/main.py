@@ -26,8 +26,30 @@ async def invoke(payload):
     stream = agent.stream_async(user_message)
 
     async for event in stream:
-        print(event)
-        yield event
+        try:
+            if isinstance(event, dict):
+                clean_event = {}
+                if "event" in event:
+                    clean_event["event"] = {}
+                    event_data = event["event"]
+
+                    if "contentBlockDelta" in event_data:
+                        delta_data = event_data["contentBlockDelta"]
+                        clean_event["event"]["contentBlockDelta"] = {
+                            "delta": delta_data.get("delta", {}),
+                            "contentBlockIndex": delta_data.get("contentBlockIndex", 0)
+                        }
+
+                    for key in ["contentBlockStart", "contentBlockStop", "messageStart", "messageStop"]:
+                        if key in event_data:
+                            clean_event["event"][key] = event_data[key]
+                if clean_event:
+                    yield clean_event
+
+        except Exception as e:
+            # Log but don't crash on malformed events
+            print(f"Error processing event: {e}")
+            continue
 
 if __name__ == "__main__":
     app.run()
