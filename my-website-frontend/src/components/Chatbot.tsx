@@ -3,12 +3,20 @@
 import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 
 interface Message {
     role: 'user' | 'assistant';
     content: string;
     timestamp?: number;
 }
+
+const normalizeMarkdown = (text: string) =>
+    text
+        // normalise Windows line endings
+        .replace(/\r\n/g, '\n')
+        // ensure headings start on a new line
+        .replace(/([^\n])(\s*##\s+)/g, '$1\n\n$2');
 
 export default function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
@@ -279,15 +287,24 @@ export default function Chatbot() {
                                 {message.role === 'user' ? (
                                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                                 ) : (
-                                    <div className="text-sm prose prose-sm dark:prose-invert max-w-none prose-p:my-4 prose-ul:my-4 prose-ol:my-4 prose-li:my-2 prose-headings:my-4 prose-h1:mb-4 prose-h2:mb-3 prose-h2:mt-6 prose-h3:mb-2 prose-h3:mt-4 leading-relaxed">
+                                    <div className="text-sm prose prose-sm dark:prose-invert max-w-none leading-relaxed">
                                         <ReactMarkdown
-                                            remarkPlugins={[remarkGfm]}
+                                            remarkPlugins={[remarkGfm, remarkBreaks]}
                                             components={{
-                                                p: ({ children }) => <p className="mb-4">{children}</p>,
-                                                br: () => <br className="my-2" />,
+                                                p: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>,
+                                                ul: ({ children }) => <ul className="mb-4 last:mb-0 ml-4 list-disc">{children}</ul>,
+                                                ol: ({ children }) => <ol className="mb-4 last:mb-0 ml-4 list-decimal">{children}</ol>,
+                                                li: ({ children }) => <li className="mb-1">{children}</li>,
+                                                h1: ({ children }) => <h1 className="text-xl font-bold mb-3 mt-4 first:mt-0">{children}</h1>,
+                                                h2: ({ children }) => <h2 className="text-lg font-bold mb-2 mt-4 first:mt-0">{children}</h2>,
+                                                h3: ({ children }) => <h3 className="text-base font-bold mb-2 mt-3 first:mt-0">{children}</h3>,
+                                                strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+                                                em: ({ children }) => <em className="italic">{children}</em>,
+                                                br: () => <br className="block my-2" />,
+                                                hr: () => <hr className="my-6 border-t border-gray-300 dark:border-gray-600" />,
                                             }}
                                         >
-                                            {message.content}
+                                            {normalizeMarkdown(message.content)}
                                         </ReactMarkdown>
                                     </div>
                                 )}
