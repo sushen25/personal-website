@@ -260,12 +260,12 @@ class ChatService:
                 'session_id': session_id
             }
 
-            # TODO: Save to DynamoDB
-            # await self._save_messages(
-            #     session_id=session_id,
-            #     messages=messages + [assistant_message],
-            #     metadata=metadata
-            # )
+
+            await self._save_messages(
+                session_id=session_id,
+                messages=messages + [assistant_message],
+                metadata=metadata
+            )
 
             yield {
                 "complete": True,
