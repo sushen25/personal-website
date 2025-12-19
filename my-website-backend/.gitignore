@@ -57,3 +57,6 @@ htmlcov/
 .mypy_cache/
 .pytype/
 .pyre/
+
+# Local DynamoDB data
+dynamodb-data/

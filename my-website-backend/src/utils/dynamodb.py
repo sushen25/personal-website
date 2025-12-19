@@ -10,9 +10,33 @@ from decimal import Decimal
 import json
 
 
-# Initialize DynamoDB client and resource
-dynamodb_client = boto3.client('dynamodb', region_name=os.getenv('AWS_REGION', 'ap-southeast-2'))
-dynamodb_resource = boto3.resource('dynamodb', region_name=os.getenv('AWS_REGION', 'ap-southeast-2'))
+# Detect local environment
+IS_LOCAL = os.getenv('STAGE', 'dev') == 'local' or os.getenv('IS_LOCAL', 'false').lower() == 'true'
+AWS_REGION = os.getenv('AWS_REGION', 'ap-southeast-2')
+
+# Configure DynamoDB client and resource
+if IS_LOCAL:
+    # Local DynamoDB configuration
+    dynamodb_client = boto3.client(
+        'dynamodb',
+        endpoint_url='http://localhost:8002',
+        region_name=AWS_REGION,
+        aws_access_key_id='local',
+        aws_secret_access_key='local'
+    )
+    dynamodb_resource = boto3.resource(
+        'dynamodb',
+        endpoint_url='http://localhost:8002',
+        region_name=AWS_REGION,
+        aws_access_key_id='local',
+        aws_secret_access_key='local'
+    )
+    print(f"🔧 Using local DynamoDB at http://localhost:8002")
+else:
+    # AWS DynamoDB configuration
+    dynamodb_client = boto3.client('dynamodb', region_name=AWS_REGION)
+    dynamodb_resource = boto3.resource('dynamodb', region_name=AWS_REGION)
+    print(f"☁️  Using AWS DynamoDB in region {AWS_REGION}")
 
 # Table names from environment variables
 CHAT_TABLE = os.getenv('CHAT_CONVERSATIONS_TABLE', 'dev-portfolio-chat-conversations')
