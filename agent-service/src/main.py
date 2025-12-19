@@ -9,7 +9,7 @@ app = BedrockAgentCoreApp()
 # Sync endpoint
 # @app.entrypoint
 # def invoke(payload):
-#     """Process user input and return a response"""
+#     """Process user input and return a response""
 #     user_message = payload.get("prompt", "Hello")
 
 #     agent = create_personal_assistant()
@@ -21,9 +21,10 @@ app = BedrockAgentCoreApp()
 async def invoke(payload):
     """Process user input and return a streaming response"""
     user_message = payload.get("prompt", "Hello")
+    session_id = payload.get("session_id", "default-session")
 
-    agent = create_personal_assistant()
-    stream = agent.stream_async(user_message)
+    agent = create_personal_assistant(session_id)
+    stream = agent.stream_async(user_message, session_id=session_id)
 
     async for event in stream:
         try:

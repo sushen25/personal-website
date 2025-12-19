@@ -173,8 +173,6 @@ resources:
         TimeToLiveSpecification:
           AttributeName: ttl
           Enabled: true
-        StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES
 
     # # Blog Posts Table
     # BlogPostsTable:

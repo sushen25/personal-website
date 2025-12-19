@@ -4,9 +4,12 @@ Personal AI Assistant Agent using Strands Agents SDK.
 This agent represents Sushen Satturu and helps visitors learn about his
 background, skills, projects, and blog content.
 """
+from tokenize import String
 from typing import Optional
 from strands import Agent
+from strands.session.repository_session_manager import RepositorySessionManager
 from services.content_service import content_service
+from utils.session_repository import DynamoDBSessionRepository
 from tools import (
     # Profile tools
     get_about_me,
@@ -28,7 +31,10 @@ from tools import (
 )
 
 
-def create_personal_assistant() -> Agent:
+# Initialize DynamoDB session repository (singleton)
+_session_repository = DynamoDBSessionRepository()
+
+def create_personal_assistant(session_id: str) -> Agent:
     """
     Create and configure the personal assistant agent.
     Returns:
@@ -90,7 +96,7 @@ You have access to comprehensive tools for querying:
 - Work Experience: get_work_experience(), get_experience_details(company_or_role)
 - General: get_contact_info(), get_resume_summary()
 
-Your goal is to provide accurate, helpful, and engaging information about {about['name']}'s professional background and work.
+Your goal is to provide concise, accurate, helpful, and engaging information about {about['name']}'s professional background and work.
 Do not answer any queries unrelated to this task.
 """
     # Register all tools
@@ -115,9 +121,11 @@ Do not answer any queries unrelated to this task.
     ]
 
     # Create agent with model and tools
+    session_manager = RepositorySessionManager(session_id=session_id, session_repository=_session_repository)
     agent = Agent(
         system_prompt=system_prompt,
         tools=tools,
+        session_manager=session_manager
     )
 
     return agent

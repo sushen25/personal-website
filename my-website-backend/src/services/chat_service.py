@@ -3,7 +3,6 @@ Chat service for managing conversations and agent interactions.
 """
 
 import time
-import uuid
 from typing import List, Optional
 from datetime import datetime
 from boto3.dynamodb.conditions import Key
@@ -23,7 +22,9 @@ class ChatService:
         messages: List[ChatMessage],
     ) -> ChatResponse:
         """
-        Send a message to the agent and save the conversation.
+        Send a message to the agent.
+
+        Note: Message persistence is handled by the agent service's session management.
 
         Args:
             session_id: Conversation session ID
@@ -38,7 +39,7 @@ class ChatService:
         start_time = time.time()
 
         try:
-            # Invoke Agent Service
+            # Invoke Agent Service (messages are persisted by Strands session management)
             agent_response = await agent_client.invoke_agent(
                 session_id=session_id,
                 messages=messages,
@@ -57,13 +58,6 @@ class ChatService:
                 role="assistant",
                 content=assistant_message.get('content', ''),
                 timestamp=time.time()
-            )
-
-            # Save messages to DynamoDB
-            await self._save_messages(
-                session_id=session_id,
-                messages=messages + [assistant_chat_message],
-                metadata=metadata
             )
 
             # Return response
@@ -206,6 +200,8 @@ class ChatService:
         """
         Send a message to the agent and stream the response.
 
+        Note: Message persistence is handled by the agent service's session management.
+
         Args:
             session_id: Conversation session ID
             messages: List of chat messages
@@ -217,7 +213,6 @@ class ChatService:
             AgentServiceError: If agent service fails
         """
         start_time = time.time()
-        accumulated_content = ""
 
         try:
             async for event in agent_client.invoke_agent_stream(
@@ -234,10 +229,8 @@ class ChatService:
                 elif "data" in event:
                     text_delta = event["data"]
 
-                # Accumulate text content for saving later
+                # Stream content to frontend
                 if text_delta:
-                    accumulated_content += text_delta
-
                     # Transform event to simple format for frontend
                     transformed_event = {
                         "data": text_delta,
@@ -249,27 +242,10 @@ class ChatService:
 
             response_time_ms = int((time.time() - start_time) * 1000)
 
-            assistant_message = ChatMessage(
-                role="assistant",
-                content=accumulated_content,
-                timestamp=time.time()
-            )
-
-            metadata = {
-                'response_time_ms': response_time_ms,
-                'session_id': session_id
-            }
-
-
-            await self._save_messages(
-                session_id=session_id,
-                messages=messages + [assistant_message],
-                metadata=metadata
-            )
-
             yield {
                 "complete": True,
-                "session_id": session_id
+                "session_id": session_id,
+                "response_time_ms": response_time_ms
             }
 
         except Exception as e:
@@ -279,54 +255,6 @@ class ChatService:
                 "error": str(e),
                 "session_id": session_id
             }
-
-    async def _save_messages(
-        self,
-        session_id: str,
-        messages: List[ChatMessage],
-        metadata: dict = None
-    ) -> None:
-        """
-        Save messages to DynamoDB.
-
-        Args:
-            session_id: Session identifier
-            messages: List of messages to save
-            metadata: Optional metadata to include
-        """
-        try:
-            current_date = datetime.now().strftime('%Y-%m-%d')
-
-            for message in messages:
-                # Generate message ID
-                message_id = str(uuid.uuid4())
-
-                # Calculate TTL (90 days from now)
-                ttl = int(time.time()) + (90 * 24 * 60 * 60)
-
-                # Prepare item
-                item = {
-                    'sessionId': session_id,
-                    'timestamp': message.timestamp or time.time(),
-                    'messageId': message_id,
-                    'role': message.role,
-                    'content': message.content,
-                    'createdDate': current_date,
-                    'ttl': ttl,
-                }
-
-                # Add metadata for assistant messages
-                if message.role == 'assistant' and metadata:
-                    item['modelUsed'] = metadata.get('model_used', 'unknown')
-                    item['tokenCount'] = metadata.get('token_count', 0)
-                    item['responseTime'] = metadata.get('response_time_ms', 0)
-
-                # Save to DynamoDB
-                chat_db.put_item(item)
-
-        except Exception as e:
-            print(f"Error saving messages: {str(e)}")
-            # Don't raise - conversation should continue even if save fails
 
 
 # Global instance for reuse
