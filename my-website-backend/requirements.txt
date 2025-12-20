@@ -25,3 +25,6 @@ python-multipart==0.0.6
 # HTML processing for blog posts
 beautifulsoup4==4.12.2
 html2text==2020.1.16
+
+# Shared portfolio package (editable install)
+-e ../portfolio-common
