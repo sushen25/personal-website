@@ -21,3 +21,7 @@ httpx==0.28.1
 # Utilities - use minimal version without cryptography extras
 python-jose==3.3.0
 python-multipart==0.0.6
+
+# HTML processing for blog posts
+beautifulsoup4==4.12.2
+html2text==2020.1.16
