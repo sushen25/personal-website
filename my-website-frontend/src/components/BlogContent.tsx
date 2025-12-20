@@ -99,9 +99,6 @@ export default function BlogContent({ html }: BlogContentProps) {
             const code = placeholder.getAttribute('data-code') || '';
             const lang = placeholder.getAttribute('data-lang') || 'text';
 
-            console.log('code', code);
-            console.log('lang', lang);
-
             if (code && placeholder.parentNode) {
                 const wrapper = document.createElement('div');
                 placeholder.parentNode.replaceChild(wrapper, placeholder);

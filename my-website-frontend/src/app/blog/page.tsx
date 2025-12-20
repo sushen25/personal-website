@@ -8,7 +8,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
 async function getPosts() {
     try {
-        console.log("API URL: ", API_URL)
         const res = await fetch(`${API_URL}/api/blog`, {
             next: { revalidate: 3600 } // Revalidate every hour
         });
@@ -68,7 +67,7 @@ export default async function Blog() {
                                             </p>
                                             {post.tags && post.tags.length > 0 && (
                                                 <div className="flex flex-wrap gap-2 mt-4">
-                                                    {post.tags.map((tag, tagIndex) => (
+                                                    {post.tags.map((tag: string, tagIndex: number) => (
                                                         <span
                                                             key={tagIndex}
                                                             className="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full"

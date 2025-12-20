@@ -2,10 +2,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BlogContent from "@/components/BlogContent";
 import Link from "next/link";
-import { posts } from "../posts";
-import { readFileSync } from "fs";
-import { join } from "path";
 import { notFound } from "next/navigation";
+
+// API URL from environment variable
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
 interface BlogPostPageProps {
     params: Promise<{
@@ -13,40 +13,44 @@ interface BlogPostPageProps {
     }>;
 }
 
-export async function generateStaticParams() {
-    return posts.map((post) => ({
-        slug: post.slug,
-    }));
+async function getPost(slug: string) {
+    try {
+        const res = await fetch(`${API_URL}/api/blog/${slug}`, {
+            next: { revalidate: 3600 } // Revalidate every hour
+        });
+
+        if (!res.ok) {
+            return null;
+        }
+
+        return await res.json();
+    } catch (error) {
+        console.error('Error fetching post:', error);
+        return null;
+    }
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const { slug } = await params;
-    const post = posts.find((p) => p.slug === slug);
+    const post = await getPost(slug);
 
     if (!post) {
         notFound();
     }
 
-    // Read the HTML article file
-    const articlesPath = join(process.cwd(), "src/app/blog/articles", post.article);
-    let articleContent = "";
+    // Extract body content from HTML (handle both camelCase and snake_case)
+    let articleContent = post.htmlContent || post.html_content || "";
 
-    try {
-        const fileContent = readFileSync(articlesPath, "utf-8");
-        // Extract just the body content from the HTML
-        const bodyMatch = fileContent.match(/<section[^>]*data-field="body"[^>]*>([\s\S]*?)<\/section>/);
-        if (bodyMatch) {
-            articleContent = bodyMatch[1];
-        } else {
-            // Fallback: try to get content from article tag
-            const articleMatch = fileContent.match(/<article[^>]*>([\s\S]*?)<\/article>/);
-            if (articleMatch) {
-                articleContent = articleMatch[1];
-            }
+    // Try to extract just the body section if it exists
+    const bodyMatch = articleContent.match(/<section[^>]*data-field="body"[^>]*>([\s\S]*?)<\/section>/);
+    if (bodyMatch) {
+        articleContent = bodyMatch[1];
+    } else {
+        // Fallback: try to get content from article tag
+        const articleMatch = articleContent.match(/<article[^>]*>([\s\S]*?)<\/article>/);
+        if (articleMatch) {
+            articleContent = articleMatch[1];
         }
-    } catch (error) {
-        console.error("Error reading article file:", error);
-        articleContent = "<p>Error loading article content.</p>";
     }
 
     return (
@@ -84,7 +88,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                                 {post.title}
                             </h1>
                             <p className="text-gray-600 dark:text-gray-400 mb-4">
-                                {new Date(post.date).toLocaleDateString('en-US', {
+                                {new Date(post.publishedDate || post.published_date).toLocaleDateString('en-US', {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric'
@@ -92,7 +96,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                             </p>
                             {post.tags && post.tags.length > 0 && (
                                 <div className="flex flex-wrap gap-2">
-                                    {post.tags.map((tag, index) => (
+                                    {post.tags.map((tag: string, index: number) => (
                                         <span
                                             key={index}
                                             className="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full"
