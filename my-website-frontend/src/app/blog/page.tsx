@@ -2,12 +2,38 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
-import { posts } from "./posts";
 
-export default function Blog() {
-    // Sort posts by date (newest first)
-    const sortedPosts = [...posts].sort((a, b) => {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+// API URL from environment variable
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
+
+async function getPosts() {
+    try {
+        console.log("API URL: ", API_URL)
+        const res = await fetch(`${API_URL}/api/blog`, {
+            next: { revalidate: 3600 } // Revalidate every hour
+        });
+
+        if (!res.ok) {
+            console.error('Failed to fetch posts:', res.status, res.statusText);
+            return [];
+        }
+
+        const posts = await res.json();
+        return posts;
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        return [];
+    }
+}
+
+export default async function Blog() {
+    const posts = await getPosts();
+
+    // Sort posts by date (newest first) - API already sorts but double-check
+    const sortedPosts = [...posts].sort((a: any, b: any) => {
+        const dateB = b.publishedDate || b.published_date;
+        const dateA = a.publishedDate || a.published_date;
+        return new Date(dateB).getTime() - new Date(dateA).getTime();
     });
 
     return (
@@ -34,7 +60,7 @@ export default function Blog() {
                                                 {post.title}
                                             </h2>
                                             <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                                                {new Date(post.date).toLocaleDateString('en-US', {
+                                                {new Date(post.publishedDate || post.published_date).toLocaleDateString('en-US', {
                                                     year: 'numeric',
                                                     month: 'long',
                                                     day: 'numeric'
