@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 import os
 
-from src.handlers import chat
+from src.handlers import chat, blog
 from src.middleware.error_handler import add_exception_handlers
 
 # Initialize FastAPI app
@@ -63,6 +63,7 @@ async def root():
 
 # Include routers
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+app.include_router(blog.router, prefix="/api/blog", tags=["blog"])
 
 # Mangum handler for AWS Lambda
 handler = Mangum(app, lifespan="off")
