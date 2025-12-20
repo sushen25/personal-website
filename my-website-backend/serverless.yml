@@ -174,74 +174,31 @@ resources:
           AttributeName: ttl
           Enabled: true
 
-    # # Blog Posts Table
-    # BlogPostsTable:
-    #   Type: AWS::DynamoDB::Table
-    #   Properties:
-    #     TableName: ${self:provider.stage}-portfolio-blog-posts
-    #     BillingMode: PAY_PER_REQUEST
-    #     AttributeDefinitions:
-    #       - AttributeName: postId
-    #         AttributeType: S
-    #       - AttributeName: slug
-    #         AttributeType: S
-    #       - AttributeName: status
-    #         AttributeType: S
-    #       - AttributeName: publishedDate
-    #         AttributeType: S
-    #     KeySchema:
-    #       - AttributeName: postId
-    #         KeyType: HASH
-    #     GlobalSecondaryIndexes:
-    #       - IndexName: StatusPublishedDateIndex
-    #         KeySchema:
-    #           - AttributeName: status
-    #             KeyType: HASH
-    #           - AttributeName: publishedDate
-    #             KeyType: RANGE
-    #         Projection:
-    #           ProjectionType: ALL
-    #       - IndexName: SlugIndex
-    #         KeySchema:
-    #           - AttributeName: slug
-    #             KeyType: HASH
-    #         Projection:
-    #           ProjectionType: ALL
-    #     StreamSpecification:
-    #       StreamViewType: NEW_AND_OLD_IMAGES
-
-    # # Analytics Table
-    # AnalyticsTable:
-    #   Type: AWS::DynamoDB::Table
-    #   Properties:
-    #     TableName: ${self:provider.stage}-portfolio-analytics
-    #     BillingMode: PAY_PER_REQUEST
-    #     AttributeDefinitions:
-    #       - AttributeName: metricType
-    #         AttributeType: S
-    #       - AttributeName: timestamp
-    #         AttributeType: N
-    #       - AttributeName: date
-    #         AttributeType: S
-    #     KeySchema:
-    #       - AttributeName: metricType
-    #         KeyType: HASH
-    #       - AttributeName: timestamp
-    #         KeyType: RANGE
-    #     GlobalSecondaryIndexes:
-    #       - IndexName: DateIndex
-    #         KeySchema:
-    #           - AttributeName: date
-    #             KeyType: HASH
-    #           - AttributeName: timestamp
-    #             KeyType: RANGE
-    #         Projection:
-    #           ProjectionType: ALL
-    #     TimeToLiveSpecification:
-    #       AttributeName: ttl
-    #       Enabled: true
-    #     StreamSpecification:
-    #       StreamViewType: NEW_AND_OLD_IMAGES
+    # Blog Posts Table
+    BlogPostsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.stage}-portfolio-blog-posts
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: postId
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
+          - AttributeName: createdDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: postId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: StatusCreatedDateIndex
+            KeySchema:
+              - AttributeName: status
+                KeyType: HASH
+              - AttributeName: createdDate
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
 
   Outputs:
     ChatConversationsTableName:
@@ -254,10 +211,10 @@ resources:
         Fn::GetAtt:
           - ApiStreamLambdaFunctionUrl
           - FunctionUrl
-    # BlogPostsTableName:
-    #   Description: Blog Posts DynamoDB Table Name
-    #   Value:
-    #     Ref: BlogPostsTable
+    BlogPostsTableName:
+      Description: Blog Posts DynamoDB Table Name
+      Value:
+        Ref: BlogPostsTable
     # AnalyticsTableName:
     #   Description: Analytics DynamoDB Table Name
     #   Value:
