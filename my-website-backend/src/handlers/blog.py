@@ -20,37 +20,37 @@ from src.services.blog_service import BlogService
 blog_service = BlogService(blog_db)
 
 
-@router.post("", response_model=BlogPost, status_code=status.HTTP_201_CREATED)
-async def create_post(post: BlogPost) -> BlogPost:
-    """
-    Create a new blog post.
+# @router.post("", response_model=BlogPost, status_code=status.HTTP_201_CREATED)
+# async def create_post(post: BlogPost) -> BlogPost:
+#     """
+#     Create a new blog post.
 
-    Automatically extracts text content from HTML if not provided.
+#     Automatically extracts text content from HTML if not provided.
 
-    Args:
-        post: BlogPost object with content
+#     Args:
+#         post: BlogPost object with content
 
-    Returns:
-        Created BlogPost with all fields populated
+#     Returns:
+#         Created BlogPost with all fields populated
 
-    Raises:
-        HTTPException: If creation fails or validation error
-    """
-    try:
-        response = await blog_service.create_post(post)
-        return response
+#     Raises:
+#         HTTPException: If creation fails or validation error
+#     """
+#     try:
+#         response = await blog_service.create_post(post)
+#         return response
 
-    except ValidationError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        print(f"Error in create_post endpoint: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to create blog post: {str(e)}"
-        )
+#     except ValidationError as e:
+#         raise HTTPException(
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#             detail=str(e)
+#         )
+#     except Exception as e:
+#         print(f"Error in create_post endpoint: {str(e)}")
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail=f"Failed to create blog post: {str(e)}"
+#         )
 
 
 @router.get("", response_model=List[BlogPostSummary])
@@ -119,72 +119,72 @@ async def get_post(slug: str) -> BlogPost:
         )
 
 
-@router.put("/{slug}", response_model=BlogPost)
-async def update_post(slug: str, updates: Dict[str, Any]) -> BlogPost:
-    """
-    Update a blog post.
+# @router.put("/{slug}", response_model=BlogPost)
+# async def update_post(slug: str, updates: Dict[str, Any]) -> BlogPost:
+#     """
+#     Update a blog post.
 
-    If html_content is updated, text_content is automatically re-extracted.
+#     If html_content is updated, text_content is automatically re-extracted.
 
-    Args:
-        slug: Post slug to update
-        updates: Dictionary of fields to update
+#     Args:
+#         slug: Post slug to update
+#         updates: Dictionary of fields to update
 
-    Returns:
-        Updated BlogPost
+#     Returns:
+#         Updated BlogPost
 
-    Raises:
-        HTTPException: If post not found or update fails
-    """
-    try:
-        post = await blog_service.update_post(slug, updates)
-        return post
+#     Raises:
+#         HTTPException: If post not found or update fails
+#     """
+#     try:
+#         post = await blog_service.update_post(slug, updates)
+#         return post
 
-    except NotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
-        )
-    except ValidationError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        print(f"Error in update_post endpoint: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update blog post: {str(e)}"
-        )
+#     except NotFoundError as e:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail=str(e)
+#         )
+#     except ValidationError as e:
+#         raise HTTPException(
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#             detail=str(e)
+#         )
+#     except Exception as e:
+#         print(f"Error in update_post endpoint: {str(e)}")
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail=f"Failed to update blog post: {str(e)}"
+        # )
 
 
-@router.delete("/{slug}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_post(slug: str):
-    """
-    Delete a blog post.
+# @router.delete("/{slug}", status_code=status.HTTP_204_NO_CONTENT)
+# async def delete_post(slug: str):
+#     """
+#     Delete a blog post.
 
-    Args:
-        slug: Post slug to delete
+#     Args:
+#         slug: Post slug to delete
 
-    Raises:
-        HTTPException: If post not found or deletion fails
-    """
-    try:
-        success = await blog_service.delete_post(slug)
-        if not success:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Blog post not found: {slug}"
-            )
+#     Raises:
+#         HTTPException: If post not found or deletion fails
+#     """
+#     try:
+#         success = await blog_service.delete_post(slug)
+#         if not success:
+#             raise HTTPException(
+#                 status_code=status.HTTP_404_NOT_FOUND,
+#                 detail=f"Blog post not found: {slug}"
+#             )
 
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"Error in delete_post endpoint: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to delete blog post: {str(e)}"
-        )
+#     except HTTPException:
+#         raise
+#     except Exception as e:
+#         print(f"Error in delete_post endpoint: {str(e)}")
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail=f"Failed to delete blog post: {str(e)}"
+#         )
 
 
 @router.post("/{slug}/view", response_model=Dict[str, int])
