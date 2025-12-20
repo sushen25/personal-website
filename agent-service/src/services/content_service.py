@@ -6,10 +6,15 @@ This service provides data for the Strands Agent tools.
 from typing import List, Dict, Any, Optional
 from boto3.dynamodb.conditions import Key, Attr
 from utils.dynamodb import blog_db
+from portfolio_common.services.blog_service import BlogService
+import asyncio
 
 
 class ContentService:
     """Service for managing and retrieving portfolio content from DynamoDB."""
+
+    # Initialize shared blog service
+    _blog_service = BlogService(blog_db)
 
     @staticmethod
     def get_about_me() -> Dict[str, Any]:
@@ -239,31 +244,24 @@ class ContentService:
             List of matching blog posts
         """
         try:
-            # Query DynamoDB for published blog posts
-            # Use GSI StatusPublishedDateIndex to get published posts
             query_lower = query.lower()
-            
-            # First, get all published posts
-            items = blog_db.query(
-                key_condition=Key('status').eq('published'),
-                index_name='StatusPublishedDateIndex',
-                limit=50
-            )
-            
-            # Filter by query term
+
+            # Get all published posts using shared BlogService
+            posts = asyncio.run(ContentService._blog_service.list_posts(status='published', limit=50))
+
+            # Convert BlogPostSummary objects to dicts and filter by query term
             matching_posts = []
-            for post in items:
-                # Search in title, excerpt, tags, and content
-                if (query_lower in post.get('title', '').lower() or
-                    query_lower in post.get('excerpt', '').lower() or
-                    query_lower in post.get('content', '').lower() or
-                    any(query_lower in tag.lower() for tag in post.get('tags', []))):
-                    matching_posts.append(post)
-            
+            for post in posts:
+                post_dict = post.model_dump()
+                # Search in title, excerpt, tags
+                if (query_lower in post_dict.get('title', '').lower() or
+                    query_lower in post_dict.get('excerpt', '').lower() or
+                    any(query_lower in tag.lower() for tag in post_dict.get('tags', []))):
+                    matching_posts.append(post_dict)
+
             return matching_posts
         except Exception as e:
             print(f"Error searching blog posts: {str(e)}")
-            # Fallback to empty list if DynamoDB query fails
             return []
 
     @staticmethod
@@ -278,8 +276,8 @@ class ContentService:
             Blog post details or None if not found
         """
         try:
-            item = blog_db.get_item({'postId': slug})
-            return item
+            post = asyncio.run(ContentService._blog_service.get_post_by_slug(slug))
+            return post.model_dump() if post else None
         except Exception as e:
             print(f"Error getting blog post: {str(e)}")
             return None
@@ -296,11 +294,10 @@ class ContentService:
             List of recent blog posts
         """
         try:
-            items = blog_db.scan()
-            return items
+            posts = asyncio.run(ContentService._blog_service.list_posts(status='published', limit=limit))
+            return [post.model_dump() for post in posts]
         except Exception as e:
             print(f"Error listing recent blog posts: {str(e)}")
-            # Fallback to empty list if DynamoDB query fails
             return []
 
     @staticmethod
@@ -316,14 +313,13 @@ class ContentService:
         """
         try:
             # Get all published posts and filter by tag
-            items = blog_db.query(
-                key_condition=Key('status').eq('published'),
-                index_name='StatusPublishedDateIndex',
-                filter_expression=Attr('tags').contains(tag),
-                limit=50
-            )
-            
-            return items
+            posts = asyncio.run(ContentService._blog_service.list_posts(status='published', limit=50))
+            matching_posts = [
+                post.model_dump()
+                for post in posts
+                if tag in post.tags
+            ]
+            return matching_posts
         except Exception as e:
             print(f"Error getting blog posts by tag: {str(e)}")
             return []
