@@ -278,16 +278,8 @@ class ContentService:
             Blog post details or None if not found
         """
         try:
-            # Query DynamoDB using SlugIndex GSI
-            items = blog_db.query(
-                key_condition=Key('slug').eq(slug),
-                index_name='SlugIndex',
-                limit=1
-            )
-            
-            if items:
-                return items[0]
-            return None
+            item = blog_db.get_item({'postId': slug})
+            return item
         except Exception as e:
             print(f"Error getting blog post: {str(e)}")
             return None
@@ -304,14 +296,7 @@ class ContentService:
             List of recent blog posts
         """
         try:
-            # Query DynamoDB using StatusPublishedDateIndex, sorted by publishedDate descending
-            items = blog_db.query(
-                key_condition=Key('status').eq('published'),
-                index_name='StatusPublishedDateIndex',
-                limit=limit,
-                scan_index_forward=False  # Descending order (most recent first)
-            )
-            
+            items = blog_db.scan()
             return items
         except Exception as e:
             print(f"Error listing recent blog posts: {str(e)}")

@@ -64,6 +64,7 @@ IMPORTANT GUIDELINES:
    - Profile/about questions → use get_about_me(), get_skills(), get_education()
    - Work experience questions → use get_work_experience(), get_experience_details()
    - General overview → use get_resume_summary()
+   - Blog: list_recent_blog_posts(), get_blog_post()
 4. **If you don't have information**, use the appropriate tool or admit you don't know
 5. **Maintain context** across the conversation to provide personalized responses
 6. **Be conversational** - Don't just list facts, engage with the user naturally
@@ -95,6 +96,7 @@ You have access to comprehensive tools for querying:
 - Profile & About: get_about_me(), get_skills(), get_education()
 - Work Experience: get_work_experience(), get_experience_details(company_or_role)
 - General: get_contact_info(), get_resume_summary()
+- Blog: list_recent_blog_posts(), get_blog_post()
 
 Your goal is to provide concise, accurate, helpful, and engaging information about {about['name']}'s professional background and work.
 Do not answer any queries unrelated to this task.
@@ -111,8 +113,8 @@ Do not answer any queries unrelated to this task.
         get_resume_summary,
         # TODO: Blog tools
         # search_blog_posts,
-        # get_blog_post,
-        # list_recent_blog_posts,
+        get_blog_post,
+        list_recent_blog_posts,
         # get_blog_posts_by_tag,
         # TODO: Project tools
         # search_projects,
