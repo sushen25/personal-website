@@ -7,6 +7,8 @@ from typing import List, Dict, Any, Optional
 from boto3.dynamodb.conditions import Key, Attr
 from utils.dynamodb import blog_db
 
+from .schemas import BlogPost, BlogPostSummary
+
 
 class ContentService:
     """Service for managing and retrieving portfolio content from DynamoDB."""
@@ -279,7 +281,7 @@ class ContentService:
         """
         try:
             item = blog_db.get_item({'postId': slug})
-            return item
+            return BlogPost(**item)
         except Exception as e:
             print(f"Error getting blog post: {str(e)}")
             return None
@@ -297,7 +299,17 @@ class ContentService:
         """
         try:
             items = blog_db.scan()
-            return items
+            summaries = []
+
+            for item in items:
+                try:
+                    summaries.append(BlogPostSummary(**item))
+                except Exception as e:
+                    print(f"Error converting item to BlogPostSummary: {e}")
+                    print(f"Item: {item}")
+                    continue
+
+            return summaries
         except Exception as e:
             print(f"Error listing recent blog posts: {str(e)}")
             # Fallback to empty list if DynamoDB query fails
