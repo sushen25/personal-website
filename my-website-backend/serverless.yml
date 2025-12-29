@@ -60,7 +60,7 @@ functions:
           path: /{proxy+}
           method: ANY
           cors:
-            origin: '*'
+            origin: 'https://sushensatturu.com'
             headers:
               - Content-Type
               - X-Amz-Date
@@ -73,7 +73,7 @@ functions:
           path: /
           method: ANY
           cors:
-            origin: '*'
+            origin: 'https://sushensatturu.com'
             headers:
               - Content-Type
               - X-Amz-Date
@@ -99,7 +99,7 @@ functions:
     url:
       cors:
         allowedOrigins:
-          - '*'
+          - 'https://sushensatturu.com'
         allowedHeaders:
           - Content-Type
           - X-Amz-Date
