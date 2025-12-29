@@ -4,7 +4,6 @@ Handles AI chat requests, blog queries, and portfolio information.
 """
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 import os
 
@@ -21,20 +20,8 @@ app = FastAPI(
     redirect_slashes=False,  # Disable automatic slash redirects
 )
 
-# CORS configuration
-# origins = [
-#     "https://sushensatturu.com",
-#     "http://localhost:3000",
-#     "http://localhost:3001",
-# ]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # allow all origins temporarily
-    allow_credentials=False,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
-)
+# Note: CORS is handled by Lambda Function URL configuration in serverless.yml
+# No need for FastAPI CORSMiddleware when using Lambda Function URLs
 
 # Add exception handlers
 add_exception_handlers(app)
