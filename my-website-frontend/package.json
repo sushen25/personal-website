@@ -8,8 +8,8 @@
     "build:prod": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "npm run build:prod && serverless client deploy --no-confirm",
-    "deploy:local": "npm run build && serverless client deploy --no-confirm"
+    "deploy": "npm run build:prod && serverless client deploy --no-confirm && aws cloudfront create-invalidation --distribution-id E18VLR6RJ4YT54 --paths '/*' --profile default",
+    "deploy:local": "npm run build && serverless client deploy --no-confirm && aws cloudfront create-invalidation --distribution-id E18VLR6RJ4YT54 --paths '/*' --profile default"
   },
   "dependencies": {
     "@types/dompurify": "^3.0.5",
