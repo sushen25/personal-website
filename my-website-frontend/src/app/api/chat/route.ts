@@ -53,10 +53,11 @@ export async function POST(request: NextRequest) {
         }
 
         return NextResponse.json({ message: response });
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error processing chat request:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Internal server error';
         return NextResponse.json(
-            { error: error.message || 'Internal server error' },
+            { error: errorMessage },
             { status: 500 }
         );
     }

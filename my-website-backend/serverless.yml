@@ -42,12 +42,19 @@ provider:
             - secretsmanager:GetSecretValue
           Resource:
             - arn:aws:secretsmanager:${self:provider.region}:*:secret:${self:provider.stage}/portfolio/*
+        # Bedrock Agent Core permissions
+        - Effect: Allow
+          Action:
+            - bedrock-agentcore:InvokeAgentRuntime
+          Resource: "*"
 
 functions:
   api:
     handler: src.main.handler
     layers:
       - Ref: PythonRequirementsLambdaLayer
+    environment:
+      AGENT_SERVICE_URL: arn:aws:bedrock-agentcore:ap-southeast-2:136079914867:runtime/website_agentV2-ZY35by5UAQ
     events:
       - http:
           path: /{proxy+}
@@ -78,10 +85,17 @@ functions:
 
   # Separate function for streaming with Lambda Function URL
   apiStream:
-    handler: src.streaming_handler.handler
+    handler: run.sh  # Lambda Web Adapter will handle the FastAPI app
     timeout: 300  # 5 minutes for long streaming responses
     layers:
       - Ref: PythonRequirementsLambdaLayer
+      # Lambda Web Adapter Layer for response streaming support
+      - arn:aws:lambda:${self:provider.region}:753240598075:layer:LambdaAdapterLayerX86:25
+    environment:
+      AGENT_SERVICE_URL: arn:aws:bedrock-agentcore:ap-southeast-2:136079914867:runtime/website_agentV2-ZY35by5UAQ
+      AWS_LAMBDA_EXEC_WRAPPER: /opt/bootstrap  # Use Lambda Web Adapter wrapper
+      AWS_LWA_INVOKE_MODE: response_stream  # Enable Lambda Web Adapter streaming mode
+      PORT: 8080  # Port for FastAPI app
     url:
       cors:
         allowedOrigins:
@@ -100,7 +114,6 @@ functions:
           - POST
           - PUT
           - DELETE
-          - OPTIONS
         allowCredentials: false
       invokeMode: RESPONSE_STREAM  # Enable response streaming
 
@@ -140,6 +153,7 @@ package:
     - '!.requirements.zip'
     - '!unzip_requirements.py'
     - 'src/**'
+    - 'run.sh'
 
 resources:
   Resources:

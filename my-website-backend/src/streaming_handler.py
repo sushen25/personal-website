@@ -58,27 +58,18 @@ async def stream_chat_response(event: dict) -> AsyncIterator[bytes]:
         yield (json.dumps(error_data) + "\n").encode('utf-8')
 
 
-def handler(event, context):
+def handler(event, response_stream, context):
     """
     Lambda handler with response streaming support.
 
     This handler is designed for Lambda's RESPONSE_STREAM invoke mode.
-    It uses the response_stream from context to write chunks.
-    """
-    # Get response stream from Lambda context
-    # In RESPONSE_STREAM mode, Lambda provides a response_stream object
-    response_stream = getattr(context, 'response_stream', None)
+    The response_stream is provided as a parameter by AWS Lambda runtime.
 
-    if not response_stream:
-        # Fallback for non-streaming invocations or local testing
-        return {
-            "statusCode": 500,
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-            },
-            "body": json.dumps({"error": "Response streaming not available"})
-        }
+    Args:
+        event: Lambda event containing the request
+        response_stream: AWS Lambda response stream object for streaming responses
+        context: Lambda context
+    """
 
     # Set response headers for streaming
     response_stream.set_metadata({
