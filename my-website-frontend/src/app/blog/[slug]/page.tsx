@@ -13,10 +13,32 @@ interface BlogPostPageProps {
     }>;
 }
 
+async function getPosts() {
+    try {
+        console.log('Fetching posts from:', `${API_URL}/api/blog`);
+        const res = await fetch(`${API_URL}/api/blog`, {
+            cache: 'force-cache'
+        });
+
+        console.log('Response status:', res.status);
+        if (!res.ok) {
+            console.error('Response not OK:', res.status, res.statusText);
+            return [];
+        }
+
+        const posts = await res.json();
+        console.log('Fetched posts:', JSON.stringify(posts));
+        return posts;
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        return [];
+    }
+}
+
 async function getPost(slug: string) {
     try {
         const res = await fetch(`${API_URL}/api/blog/${slug}`, {
-            next: { revalidate: 3600 } // Revalidate every hour
+            cache: 'force-cache'
         });
 
         if (!res.ok) {
@@ -27,6 +49,25 @@ async function getPost(slug: string) {
     } catch (error) {
         console.error('Error fetching post:', error);
         return null;
+    }
+}
+
+export async function generateStaticParams() {
+    try {
+        const posts = await getPosts();
+        console.log('Fetched posts for static params:', posts.length);
+
+        if (!Array.isArray(posts)) {
+            console.error('Posts is not an array:', posts);
+            return [];
+        }
+
+        return posts.map((post: { slug: string }) => ({
+            slug: post.slug,
+        }));
+    } catch (error) {
+        console.error('Error in generateStaticParams:', error);
+        return [];
     }
 }
 

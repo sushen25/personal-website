@@ -6,6 +6,15 @@ import Image from "next/image";
 // API URL from environment variable
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
+interface BlogPost {
+    slug: string;
+    title: string;
+    publishedDate?: string;
+    published_date?: string;
+    tags?: string[];
+    thumbnail?: string;
+}
+
 async function getPosts() {
     try {
         const res = await fetch(`${API_URL}/api/blog`, {
@@ -29,9 +38,9 @@ export default async function Blog() {
     const posts = await getPosts();
 
     // Sort posts by date (newest first) - API already sorts but double-check
-    const sortedPosts = [...posts].sort((a: any, b: any) => {
-        const dateB = b.publishedDate || b.published_date;
-        const dateA = a.publishedDate || a.published_date;
+    const sortedPosts = [...posts].sort((a: BlogPost, b: BlogPost) => {
+        const dateB = b.publishedDate || b.published_date || '';
+        const dateA = a.publishedDate || a.published_date || '';
         return new Date(dateB).getTime() - new Date(dateA).getTime();
     });
 

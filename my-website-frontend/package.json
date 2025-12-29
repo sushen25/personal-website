@@ -5,8 +5,11 @@
   "scripts": {
     "dev": "next dev --turbopack --port 8000",
     "build": "next build",
+    "build:prod": "NODE_ENV=production next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "npm run build:prod && serverless client deploy --no-confirm",
+    "deploy:local": "npm run build && serverless client deploy --no-confirm"
   },
   "dependencies": {
     "@types/dompurify": "^3.0.5",

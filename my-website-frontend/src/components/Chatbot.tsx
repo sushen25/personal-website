@@ -12,7 +12,7 @@ interface Message {
 }
 
 const normalizeMarkdown = (text: string) =>
-    text
+    text 
         // normalise Windows line endings
         .replace(/\r\n/g, '\n')
         // ensure headings start on a new line
@@ -29,7 +29,7 @@ export default function Chatbot() {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [sessionId, setSessionId] = useState<string>('');
-    const [useStreaming, setUseStreaming] = useState(true);
+    const [useStreaming] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -64,7 +64,7 @@ export default function Chatbot() {
 
         try {
             // Get the API endpoint from environment variable or use a default
-            const apiEndpoint = 'http://localhost:3000/dev/api/chat/';
+            const apiEndpoint = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/dev'}/api/chat/`;
 
             const requestBody = {
                 messages: [...messages, newUserMessage].map(msg => ({
@@ -132,7 +132,7 @@ export default function Chatbot() {
         }]);
 
         try {
-            const apiEndpoint = 'http://localhost:8001/api/chat/stream';
+            const apiEndpoint = `${process.env.NEXT_PUBLIC_STREAM_API_URL || 'http://localhost:8001'}/api/chat/stream`;
             const requestBody = {
                 messages: [...messages, newUserMessage].map(msg => ({
                     role: msg.role,
@@ -355,7 +355,7 @@ export default function Chatbot() {
                         </button>
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                        Ask me anything about Sushen's professional background
+                        Ask me anything about Sushen&apos;s professional background
                     </p>
                 </div>
             </div>
