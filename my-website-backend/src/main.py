@@ -4,6 +4,7 @@ Handles AI chat requests, blog queries, and portfolio information.
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 import os
 
@@ -20,8 +21,20 @@ app = FastAPI(
     redirect_slashes=False,  # Disable automatic slash redirects
 )
 
-# Note: CORS is handled by Lambda Function URL configuration in serverless.yml
-# No need for FastAPI CORSMiddleware when using Lambda Function URLs
+# CORS Configuration
+# In production, CORS is handled by Lambda Function URL configuration in serverless.yml
+# For local development, we add CORSMiddleware
+IS_LOCAL = os.getenv("STAGE", "dev") == "local" or os.getenv("IS_LOCAL", "false").lower() == "true"
+
+if IS_LOCAL:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:8000"],  # Next.js dev server
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    print("🔧 CORS enabled for local development")
 
 # Add exception handlers
 add_exception_handlers(app)
