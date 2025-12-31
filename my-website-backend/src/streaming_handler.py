@@ -78,7 +78,7 @@ def handler(event, response_stream, context):
             "Content-Type": "application/x-ndjson",
             "Cache-Control": "no-cache",
             "X-Accel-Buffering": "no",
-            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Origin": "https://sushensatturu.com",
             "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Api-Key",
         }
