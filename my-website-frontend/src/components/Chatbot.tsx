@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
@@ -10,6 +10,17 @@ interface Message {
     content: string;
     timestamp?: number;
 }
+
+const suggestedPrompts = [
+    "What are Sushen's main skills?",
+    "Tell me about his work experience",
+    "What projects has he built?",
+    "Show me recent blog posts",
+    "What's his education background?",
+    "How can I contact him?",
+    "Tell me a fun fact about Sushen",
+    "What technologies does he work with?"
+]
 
 const normalizeMarkdown = (text: string) =>
     text
@@ -32,6 +43,12 @@ export default function Chatbot() {
     const [useStreaming] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+
+    // Select 3 random prompts when chatbot opens
+    const displayedPrompts = useMemo(() => {
+        const shuffled = [...suggestedPrompts].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, 3);
+    }, [isOpen]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -232,8 +249,8 @@ export default function Chatbot() {
             {/* Floating Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center z-50 transition-all duration-300 hover:scale-110"
-                aria-label="Open chat"
+                className={`fixed ${isOpen ? 'bottom-24 right-4' : 'bottom-6 right-6'} w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center z-50 transition-all duration-300 hover:scale-110`}
+                aria-label={isOpen ? "Close chat" : "Open chat"}
             >
                 {isOpen ? (
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,6 +299,30 @@ export default function Chatbot() {
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {/* Suggested Prompts - show only when no user messages yet */}
+                    {messages.length === 1 && messages[0].role === 'assistant' && (
+                        <div className="space-y-3 mt-2">
+                            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                                Suggested Questions
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                                {displayedPrompts.map((prompt, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => {
+                                            setInput(prompt);
+                                            inputRef.current?.focus();
+                                        }}
+                                        className="px-3 py-1.5 text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full border border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:scale-105 active:scale-95"
+                                    >
+                                        {prompt}
+                                    </button>
+                                ))}
+                            </div>
+                            <hr className="my-6 border-t border-gray-300 dark:border-gray-600" />
+                        </div>
+                    )}
+
                     {messages.map((message, index) => (
                         <div
                             key={index}
