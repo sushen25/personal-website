@@ -42,6 +42,7 @@ provider:
             - secretsmanager:GetSecretValue
           Resource:
             - arn:aws:secretsmanager:${self:provider.region}:*:secret:${self:provider.stage}/portfolio/*
+            - arn:aws:secretsmanager:${self:provider.region}:*:secret:${self:provider.stage}-portfolio-*
         # Bedrock Agent Core permissions
         - Effect: Allow
           Action:

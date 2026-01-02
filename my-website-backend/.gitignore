@@ -60,3 +60,5 @@ htmlcov/
 
 # Local DynamoDB data
 dynamodb-data/
+
+test_rate_limit.py

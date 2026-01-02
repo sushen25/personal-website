@@ -18,22 +18,21 @@ echo "Generated API key: $API_KEY"
 echo ""
 echo "Creating secret in AWS Secrets Manager..."
 
-# Check if secret already exists
-if aws secretsmanager describe-secret --secret-id "$SECRET_NAME" --region "$REGION" 2>/dev/null; then
+# Try to create secret, if it exists, update it instead
+echo "Attempting to create secret..."
+if aws secretsmanager create-secret \
+    --name "$SECRET_NAME" \
+    --description "API key for portfolio website chat authentication" \
+    --secret-string "$API_KEY" \
+    --region "$REGION" 2>/dev/null; then
+    echo "Secret created successfully!"
+else
     echo "Secret already exists. Updating..."
     aws secretsmanager update-secret \
         --secret-id "$SECRET_NAME" \
         --secret-string "$API_KEY" \
         --region "$REGION"
     echo "Secret updated successfully!"
-else
-    echo "Creating new secret..."
-    aws secretsmanager create-secret \
-        --name "$SECRET_NAME" \
-        --description "API key for portfolio website chat authentication" \
-        --secret-string "$API_KEY" \
-        --region "$REGION"
-    echo "Secret created successfully!"
 fi
 
 echo ""

@@ -96,12 +96,20 @@ export default function Chatbot() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-API-Key': process.env.NEXT_PUBLIC_API_KEY || '',
                 },
                 body: JSON.stringify(requestBody),
             });
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
+
+                // Handle rate limiting specifically
+                if (response.status === 429) {
+                    const retryAfter = errorData.detail?.retry_after || 60;
+                    throw new Error(`The chatbot is currently at capacity. Please try again in ${retryAfter} seconds.`);
+                }
+
                 throw new Error(errorData.message || 'Failed to get response');
             }
 
@@ -118,9 +126,10 @@ export default function Chatbot() {
             }]);
         } catch (error) {
             console.error('Error sending message:', error);
+            const errorMessage = error instanceof Error ? error.message : "I'm sorry, I encountered an error. Please make sure the backend API is running and configured correctly.";
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: "I'm sorry, I encountered an error. Please make sure the backend API is running and configured correctly."
+                content: errorMessage
             }]);
         } finally {
             setIsLoading(false);
@@ -163,11 +172,18 @@ export default function Chatbot() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-API-Key': process.env.NEXT_PUBLIC_API_KEY || '',
                 },
                 body: JSON.stringify(requestBody),
             });
 
             if (!response.ok) {
+                // Handle rate limiting specifically
+                if (response.status === 429) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const retryAfter = errorData.detail?.retry_after || 60;
+                    throw new Error(`The chatbot is currently at capacity. Please try again in ${retryAfter} seconds.`);
+                }
                 throw new Error('Failed to get streaming response');
             }
 
@@ -220,9 +236,10 @@ export default function Chatbot() {
             }
         } catch (error) {
             console.error('Error sending message:', error);
+            const errorMessage = error instanceof Error ? error.message : "I'm sorry, I encountered an error. Please try again.";
             setMessages(prev => [...prev.slice(0, -1), {
                 role: 'assistant',
-                content: "I'm sorry, I encountered an error. Please try again."
+                content: errorMessage
             }]);
         } finally {
             setIsLoading(false);

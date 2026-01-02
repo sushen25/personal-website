@@ -11,14 +11,22 @@ from datetime import datetime
 class ChatMessage(BaseModel):
     """Single chat message model."""
     role: str = Field(..., description="Message role: 'user' or 'assistant'")
-    content: str = Field(..., description="Message content")
+    content: str = Field(
+        ...,
+        description="Message content",
+        max_length=10000  # Limit message content to 10,000 characters
+    )
     timestamp: Optional[float] = Field(None, description="Unix timestamp")
 
 
 class ChatRequest(BaseModel):
     """Chat request model."""
     session_id: Optional[str] = Field(None, description="Session ID for conversation continuity")
-    messages: List[ChatMessage] = Field(..., description="List of chat messages")
+    messages: List[ChatMessage] = Field(
+        ...,
+        description="List of chat messages",
+        max_length=50  # Limit to 50 messages per request
+    )
     model_provider: Optional[str] = Field(None, description="AI model provider (bedrock, openai, anthropic)")
 
     class Config:
