@@ -9,6 +9,7 @@ from boto3.dynamodb.conditions import Key
 
 from src.models.schemas import ChatMessage, ChatResponse, ConversationHistory
 from src.services.agent_client import agent_client
+from src.services.response_cache import get_cached_response
 from src.utils.dynamodb import chat_db
 from src.middleware.error_handler import AgentServiceError, NotFoundError
 
@@ -39,7 +40,31 @@ class ChatService:
         start_time = time.time()
 
         try:
-            # Invoke Agent Service (messages are persisted by Strands session management)
+            # Check cache for suggested prompts (if this is the first user message)
+            user_messages = [msg for msg in messages if msg.role == "user"]
+            if len(user_messages) == 1:  # First user message
+                last_user_message = user_messages[-1].content
+                cached_response = get_cached_response(last_user_message)
+
+                if cached_response:
+                    print(f"Cache hit for prompt: {last_user_message[:50]}...")
+                    response_time_ms = int((time.time() - start_time) * 1000)
+
+                    return ChatResponse(
+                        session_id=session_id,
+                        message=ChatMessage(
+                            role="assistant",
+                            content=cached_response,
+                            timestamp=time.time()
+                        ),
+                        metadata={
+                            'response_time_ms': response_time_ms,
+                            'cached': True,
+                            'cache_hit': True
+                        }
+                    )
+
+            # No cache hit - invoke Agent Service
             agent_response = await agent_client.invoke_agent(
                 session_id=session_id,
                 messages=messages,
@@ -52,6 +77,7 @@ class ChatService:
             # Calculate response time
             response_time_ms = int((time.time() - start_time) * 1000)
             metadata['response_time_ms'] = response_time_ms
+            metadata['cached'] = False
 
             # Create assistant message
             assistant_chat_message = ChatMessage(
@@ -215,6 +241,44 @@ class ChatService:
         start_time = time.time()
 
         try:
+            # Check cache for suggested prompts (if this is the first user message)
+            user_messages = [msg for msg in messages if msg.role == "user"]
+            if len(user_messages) == 1:  # First user message
+                last_user_message = user_messages[-1].content
+                cached_response = get_cached_response(last_user_message)
+
+                if cached_response:
+                    print(f"Cache hit for streaming prompt: {last_user_message[:50]}...")
+
+                    # Stream cached response in chunks to simulate real streaming
+                    # Split by words for smoother streaming experience
+                    words = cached_response.split(' ')
+                    chunk_size = 5  # Stream 5 words at a time
+
+                    import asyncio
+                    for i in range(0, len(words), chunk_size):
+                        chunk = ' '.join(words[i:i+chunk_size])
+                        if i + chunk_size < len(words):
+                            chunk += ' '  # Add space between chunks
+
+                        yield {
+                            "data": chunk,
+                            "type": "content_block_delta"
+                        }
+                        # Small delay to simulate streaming (optional, can be removed for instant)
+                        await asyncio.sleep(0.01)
+
+                    response_time_ms = int((time.time() - start_time) * 1000)
+
+                    yield {
+                        "complete": True,
+                        "session_id": session_id,
+                        "response_time_ms": response_time_ms,
+                        "cached": True
+                    }
+                    return
+
+            # No cache hit - invoke Agent Service for streaming
             async for event in agent_client.invoke_agent_stream(
                 session_id=session_id,
                 messages=messages
@@ -245,7 +309,8 @@ class ChatService:
             yield {
                 "complete": True,
                 "session_id": session_id,
-                "response_time_ms": response_time_ms
+                "response_time_ms": response_time_ms,
+                "cached": False
             }
 
         except Exception as e:
