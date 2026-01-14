@@ -37,7 +37,7 @@ class AgentClient:
     def _get_bedrock_client(self):
         """Get or create the Bedrock Agent Core client (lazy initialization)."""
         if self._bedrock_client is None:
-            self._bedrock_client = boto3.client('bedrock-agentcore')
+            self._bedrock_client = boto3.client('bedrock-agentcore', region_name="us-west-2")
         return self._bedrock_client
 
     async def invoke_agent(
@@ -202,6 +202,7 @@ class AgentClient:
             Exception: If agent invocation fails
         """
         if self.is_bedrock_arn:
+            print("INVLKING STREAM: ")
             async for event in self._invoke_bedrock_agent_stream(session_id, messages):
                 yield event
         else:
@@ -224,9 +225,11 @@ class AgentClient:
             bedrock_client = self._get_bedrock_client()
 
             # Prepare payload for Bedrock Agent Core
-            payload = json.dumps({"prompt": latest_user_message}).encode('utf-8')
+            payload = json.dumps({"prompt": latest_user_message, "session_id": session_id}).encode('utf-8')
 
             # Invoke agent runtime with the full ARN
+            print("Invoking agent URL: ", self.agent_url)
+            print("With session id: ", session_id)
             response = bedrock_client.invoke_agent_runtime(
                 agentRuntimeArn=self.agent_url,
                 runtimeSessionId=session_id,
