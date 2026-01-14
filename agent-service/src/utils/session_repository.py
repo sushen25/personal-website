@@ -361,6 +361,7 @@ class DynamoDBSessionRepository(SessionRepository):
             List of SessionMessage objects
         """
         try:
+            print("Getting messages for session: ", session_id)
             message_items = self.db.query(
                 key_condition=Key('sessionId').eq(session_id),
                 scan_index_forward=True  # Chronological order
@@ -385,7 +386,7 @@ class DynamoDBSessionRepository(SessionRepository):
                         print(f"Error reconstructing message {item.get('messageId')}: {str(e)}")
                         continue
             
-            print("READING MESSAGES")
+            
             print(messages)
             return messages
 

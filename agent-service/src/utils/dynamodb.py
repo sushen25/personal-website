@@ -11,7 +11,7 @@ from decimal import Decimal
 
 # Detect local environment
 IS_LOCAL = os.getenv('STAGE', 'dev') == 'local' or os.getenv('IS_LOCAL', 'false').lower() == 'true'
-AWS_REGION = os.getenv('AWS_REGION', 'ap-southeast-2')
+AWS_REGION = 'ap-southeast-2'
 
 # Configure DynamoDB client and resource
 if IS_LOCAL:

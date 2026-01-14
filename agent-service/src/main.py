@@ -20,6 +20,7 @@ app = BedrockAgentCoreApp()
 @app.entrypoint
 async def invoke(payload):
     """Process user input and return a streaming response"""
+    print("PAYLOAD: ", payload)
     user_message = payload.get("prompt", "Hello")
     session_id = payload.get("session_id", "default-session")
 
