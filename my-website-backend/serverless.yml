@@ -55,7 +55,7 @@ functions:
     layers:
       - Ref: PythonRequirementsLambdaLayer
     environment:
-      AGENT_SERVICE_URL: arn:aws:bedrock-agentcore:ap-southeast-2:136079914867:runtime/website_agentV2-ZY35by5UAQ
+      AGENT_SERVICE_URL: arn:aws:bedrock-agentcore:us-west-2:136079914867:runtime/sus_agent-mY01vmBBY4
     events:
       - http:
           path: /{proxy+}
@@ -93,7 +93,7 @@ functions:
       # Lambda Web Adapter Layer for response streaming support
       - arn:aws:lambda:${self:provider.region}:753240598075:layer:LambdaAdapterLayerX86:25
     environment:
-      AGENT_SERVICE_URL: arn:aws:bedrock-agentcore:ap-southeast-2:136079914867:runtime/website_agentV2-ZY35by5UAQ
+      AGENT_SERVICE_URL: arn:aws:bedrock-agentcore:us-west-2:136079914867:runtime/sus_agent-mY01vmBBY4
       AWS_LAMBDA_EXEC_WRAPPER: /opt/bootstrap  # Use Lambda Web Adapter wrapper
       AWS_LWA_INVOKE_MODE: response_stream  # Enable Lambda Web Adapter streaming mode
       PORT: 8080  # Port for FastAPI app
