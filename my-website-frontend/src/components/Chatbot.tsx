@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
@@ -30,6 +31,7 @@ const normalizeMarkdown = (text: string) =>
         .replace(/([^\n])(\s*##\s+)/g, '$1\n\n$2');
 
 export default function Chatbot() {
+    const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -43,15 +45,26 @@ export default function Chatbot() {
     const [useStreaming] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    const [displayedPrompts, setDisplayedPrompts] = useState<string[]>([]);
 
-    // Select 3 random prompts when chatbot opens
-    const displayedPrompts = useMemo(() => {
-        const shuffled = [...suggestedPrompts].sort(() => Math.random() - 0.5);
-        return shuffled.slice(0, 3);
-    }, [isOpen]);
+    // Select 3 random prompts when chatbot opens (client-side only to avoid hydration mismatch)
+    useEffect(() => {
+        if (isOpen && displayedPrompts.length === 0) {
+            const shuffled = [...suggestedPrompts].sort(() => Math.random() - 0.5);
+            setDisplayedPrompts(shuffled.slice(0, 3));
+        }
+    }, [isOpen, displayedPrompts.length]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Helper function to add page context to user message
+    const addPageContext = (userMessage: string): string => {
+        if (!pathname || pathname === '/') {
+            return userMessage;
+        }
+        return `User's current page: ${pathname}\n\nUser message: ${userMessage}`;
     };
 
     useEffect(() => {
@@ -70,7 +83,7 @@ export default function Chatbot() {
         const userMessage = input.trim();
         setInput('');
 
-        // Add user message to the chat
+        // Add user message to the chat (display without page context)
         const newUserMessage: Message = {
             role: 'user',
             content: userMessage,
@@ -83,12 +96,19 @@ export default function Chatbot() {
             // Get the API endpoint from environment variable or use a default
             const apiEndpoint = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/dev'}/api/chat/`;
 
+            // Add page context to the message sent to API
+            const messageWithContext = addPageContext(userMessage);
+
             const requestBody = {
-                messages: [...messages, newUserMessage].map(msg => ({
+                messages: [...messages.map(msg => ({
                     role: msg.role,
                     content: msg.content,
                     ...(msg.timestamp && { timestamp: msg.timestamp })
-                })),
+                })), {
+                    role: 'user',
+                    content: messageWithContext,
+                    timestamp: Date.now() / 1000
+                }],
                 ...(sessionId && { session_id: sessionId })
             };
 
@@ -142,6 +162,7 @@ export default function Chatbot() {
         const userMessage = input.trim();
         setInput('');
 
+        // Add user message to the chat (display without page context)
         const newUserMessage: Message = {
             role: 'user',
             content: userMessage,
@@ -159,12 +180,20 @@ export default function Chatbot() {
 
         try {
             const apiEndpoint = `${process.env.NEXT_PUBLIC_STREAM_API_URL || 'http://localhost:8001'}/api/chat/stream`;
+
+            // Add page context to the message sent to API
+            const messageWithContext = addPageContext(userMessage);
+
             const requestBody = {
-                messages: [...messages, newUserMessage].map(msg => ({
+                messages: [...messages.map(msg => ({
                     role: msg.role,
                     content: msg.content,
                     ...(msg.timestamp && { timestamp: msg.timestamp })
-                })),
+                })), {
+                    role: 'user',
+                    content: messageWithContext,
+                    timestamp: Date.now() / 1000
+                }],
                 ...(sessionId && { session_id: sessionId })
             };
 
