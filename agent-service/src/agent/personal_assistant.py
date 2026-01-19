@@ -125,10 +125,8 @@ Do not answer any queries unrelated to this task.
     ]
 
     # Create agent with model and tools
-    print("SESSION ID: ", session_id)
     session_manager = RepositorySessionManager(session_id=session_id, session_repository=_session_repository)
     agent = Agent(
-        model = "anthropic.claude-3-haiku-20240307-v1:0",
         system_prompt=system_prompt,
         tools=tools,
         session_manager=session_manager
