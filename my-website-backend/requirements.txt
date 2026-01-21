@@ -1,0 +1,27 @@
+# FastAPI and ASGI server
+fastapi==0.104.1
+mangum==0.17.0
+# Use minimal uvicorn without heavy optional dependencies
+uvicorn==0.24.0
+
+# AWS SDK - boto3 is already available in Lambda runtime
+# boto3==1.34.0
+# botocore==1.34.0
+
+# Data validation
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Environment variables
+python-dotenv==1.0.0
+
+# HTTP client for Agent Service communication
+httpx==0.28.1
+
+# Utilities - use minimal version without cryptography extras
+python-jose==3.3.0
+python-multipart==0.0.6
+
+# HTML processing for blog posts
+beautifulsoup4==4.12.2
+html2text==2020.1.16

@@ -1,0 +1,60 @@
+default_agent: sus_agent
+agents:
+  sus_agent:
+    name: sus_agent
+    entrypoint: /Users/sushensatturu/PersonalRepos/my-website/agent-service/src/main.py
+    deployment_type: direct_code_deploy
+    runtime_type: PYTHON_3_12
+    platform: linux/arm64
+    container_runtime: null
+    source_path: /Users/sushensatturu/PersonalRepos/my-website/agent-service/src
+    aws:
+      execution_role: arn:aws:iam::136079914867:role/AmazonBedrockAgentCoreSDKRuntime-us-west-2-04e3038f14
+      execution_role_auto_create: false
+      account: '136079914867'
+      region: us-west-2
+      ecr_repository: null
+      ecr_auto_create: false
+      s3_path: s3://bedrock-agentcore-codebuild-sources-136079914867-us-west-2
+      s3_auto_create: false
+      network_configuration:
+        network_mode: PUBLIC
+        network_mode_config: null
+      protocol_configuration:
+        server_protocol: HTTP
+      observability:
+        enabled: true
+      lifecycle_configuration:
+        idle_runtime_session_timeout: null
+        max_lifetime: null
+    bedrock_agentcore:
+      agent_id: sus_agent-mY01vmBBY4
+      agent_arn: arn:aws:bedrock-agentcore:us-west-2:136079914867:runtime/sus_agent-mY01vmBBY4
+      agent_session_id: null
+    codebuild:
+      project_name: null
+      execution_role: null
+      source_bucket: null
+    memory:
+      mode: NO_MEMORY
+      memory_id: null
+      memory_arn: null
+      memory_name: null
+      event_expiry_days: 30
+      first_invoke_memory_check_done: false
+      was_created_by_toolkit: false
+    identity:
+      credential_providers: []
+      workload: null
+    aws_jwt:
+      enabled: false
+      audiences: []
+      signing_algorithm: ES384
+      issuer_url: null
+      duration_seconds: 300
+    authorizer_configuration: null
+    request_header_configuration: null
+    oauth_configuration: null
+    api_key_env_var_name: null
+    api_key_credential_provider_name: null
+    is_generated_by_agentcore_create: false

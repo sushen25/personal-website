@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --port 8000",
     "build": "next build",
+    "build:prod": "NODE_ENV=production next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "npm run build:prod && serverless client deploy --no-confirm && aws cloudfront create-invalidation --distribution-id E18VLR6RJ4YT54 --paths '/*' --profile default",
+    "deploy:local": "npm run build && serverless client deploy --no-confirm && aws cloudfront create-invalidation --distribution-id E18VLR6RJ4YT54 --paths '/*' --profile default"
   },
   "dependencies": {
     "@types/dompurify": "^3.0.5",
@@ -15,7 +18,10 @@
     "next": "15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-syntax-highlighter": "^16.1.0"
+    "react-markdown": "^10.1.0",
+    "react-syntax-highlighter": "^16.1.0",
+    "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

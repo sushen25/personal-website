@@ -1,0 +1,239 @@
+service: my-website-backend
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: ap-southeast-2
+  stage: ${opt:stage, 'dev'}
+  memorySize: 512
+  timeout: 29
+  environment:
+    STAGE: ${self:provider.stage}
+    CHAT_CONVERSATIONS_TABLE: ${self:provider.stage}-portfolio-chat-conversations
+    BLOG_POSTS_TABLE: ${self:provider.stage}-portfolio-blog-posts
+    ANALYTICS_TABLE: ${self:provider.stage}-portfolio-analytics
+    PYTHONPATH: /var/task:/opt/python
+    # Agent Service URL - will be set based on deployment
+    # For local dev, use http://localhost:8080
+    # For production, use the deployed agent service URL
+    AGENT_SERVICE_URL: ${env:AGENT_SERVICE_URL, 'http://localhost:8080'}
+  iam:
+    role:
+      statements:
+        # DynamoDB permissions
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchGetItem
+            - dynamodb:BatchWriteItem
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.stage}-portfolio-*
+            - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.stage}-portfolio-*/index/*
+        # Secrets Manager permissions
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource:
+            - arn:aws:secretsmanager:${self:provider.region}:*:secret:${self:provider.stage}/portfolio/*
+            - arn:aws:secretsmanager:${self:provider.region}:*:secret:${self:provider.stage}-portfolio-*
+        # Bedrock Agent Core permissions
+        - Effect: Allow
+          Action:
+            - bedrock-agentcore:InvokeAgentRuntime
+          Resource: "*"
+
+functions:
+  api:
+    handler: src.main.handler
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
+    environment:
+      AGENT_SERVICE_URL: arn:aws:bedrock-agentcore:us-west-2:136079914867:runtime/sus_agent-mY01vmBBY4
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors:
+            origin: 'https://sushensatturu.com'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+      - http:
+          path: /
+          method: ANY
+          cors:
+            origin: 'https://sushensatturu.com'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+
+  # Separate function for streaming with Lambda Function URL
+  apiStream:
+    handler: run.sh  # Lambda Web Adapter will handle the FastAPI app
+    timeout: 300  # 5 minutes for long streaming responses
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
+      # Lambda Web Adapter Layer for response streaming support
+      - arn:aws:lambda:${self:provider.region}:753240598075:layer:LambdaAdapterLayerX86:25
+    environment:
+      AGENT_SERVICE_URL: arn:aws:bedrock-agentcore:us-west-2:136079914867:runtime/sus_agent-mY01vmBBY4
+      AWS_LAMBDA_EXEC_WRAPPER: /opt/bootstrap  # Use Lambda Web Adapter wrapper
+      AWS_LWA_INVOKE_MODE: response_stream  # Enable Lambda Web Adapter streaming mode
+      PORT: 8080  # Port for FastAPI app
+    url:
+      cors:
+        allowedOrigins:
+          - 'https://sushensatturu.com'
+        allowedHeaders:
+          - Content-Type
+          - X-Amz-Date
+          - Authorization
+          - X-Api-Key
+          - X-Amz-Security-Token
+          - X-Amz-User-Agent
+          - Cache-Control
+          - X-Accel-Buffering
+        allowedMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+        allowCredentials: false
+      invokeMode: RESPONSE_STREAM  # Enable response streaming
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    layer: true
+    slim: true
+    strip: false
+    slimPatterns:
+      - '**/*.py[c|o]'
+      - '**/__pycache__*'
+      - '**/*.dist-info*'
+      - '**/*.egg-info*'
+      - '**/tests/**'
+      - '**/test/**'
+    noDeploy:
+      - pytest
+      - pytest-cov
+      - mypy
+      - boto3
+      - botocore
+      - s3transfer
+
+package:
+  patterns:
+    - '!venv/**'
+    - '!.venv/**'
+    - '!node_modules/**'
+    - '!.serverless/**'
+    - '!.pytest_cache/**'
+    - '!tests/**'
+    - '!*.md'
+    - '!.git/**'
+    - '!.env*'
+    - '!__pycache__/**'
+    - '!.requirements.zip'
+    - '!unzip_requirements.py'
+    - 'src/**'
+    - 'run.sh'
+
+resources:
+  Resources:
+    # Chat Conversations Table
+    ChatConversationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.stage}-portfolio-chat-conversations
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: sessionId
+            AttributeType: S
+          - AttributeName: timestamp
+            AttributeType: N
+          - AttributeName: createdDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: sessionId
+            KeyType: HASH
+          - AttributeName: timestamp
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: CreatedDateIndex
+            KeySchema:
+              - AttributeName: createdDate
+                KeyType: HASH
+              - AttributeName: timestamp
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+
+    # Blog Posts Table
+    BlogPostsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.stage}-portfolio-blog-posts
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: postId
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
+          - AttributeName: createdDate
+            AttributeType: S
+        KeySchema:
+          - AttributeName: postId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: StatusCreatedDateIndex
+            KeySchema:
+              - AttributeName: status
+                KeyType: HASH
+              - AttributeName: createdDate
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+
+  Outputs:
+    ChatConversationsTableName:
+      Description: Chat Conversations DynamoDB Table Name
+      Value:
+        Ref: ChatConversationsTable
+    ApiStreamFunctionUrl:
+      Description: Streaming API Function URL
+      Value:
+        Fn::GetAtt:
+          - ApiStreamLambdaFunctionUrl
+          - FunctionUrl
+    BlogPostsTableName:
+      Description: Blog Posts DynamoDB Table Name
+      Value:
+        Ref: BlogPostsTable
+    # AnalyticsTableName:
+    #   Description: Analytics DynamoDB Table Name
+    #   Value:
+    #     Ref: AnalyticsTable
+
+plugins:
+  - serverless-offline
