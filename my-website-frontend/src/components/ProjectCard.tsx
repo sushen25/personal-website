@@ -19,7 +19,7 @@ export default function ProjectCard({
     githubUrl
 }: ProjectCardProps) {
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform hover:scale-[1.01]">
+        <div className="bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-transform hover:scale-[1.01]">
             <div className="relative h-48 w-full">
                 <Image
                     src={imageSrc}
@@ -30,9 +30,9 @@ export default function ProjectCard({
             </div>
 
             <div className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{title}</h3>
+                <h3 className="text-xl font-bold mb-2 text-white">{title}</h3>
 
-                <p className="text-gray-700 dark:text-gray-300 mb-4">
+                <p className="text-gray-300 mb-4">
                     {description}
                 </p>
 
@@ -40,7 +40,7 @@ export default function ProjectCard({
                     {tags.map((tag, index) => (
                         <span
                             key={index}
-                            className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                            className="px-2 py-1 text-xs rounded-full bg-blue-900 text-blue-200"
                         >
                             {tag}
                         </span>
@@ -62,7 +62,7 @@ export default function ProjectCard({
                         <Link
                             href={githubUrl}
                             target="_blank"
-                            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                            className="px-4 py-2 border border-gray-600 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                         >
                             <span className="flex items-center">
                                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

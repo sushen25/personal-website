@@ -18,7 +18,7 @@ interface BlogPost {
 async function getPosts() {
     try {
         const res = await fetch(`${API_URL}/api/blog`, {
-            next: { revalidate: 3600 } // Revalidate every hour
+            cache: 'force-cache'
         });
 
         if (!res.ok) {
@@ -50,7 +50,7 @@ export default async function Blog() {
 
             <main className="pt-24 pb-16">
                 <div className="container mx-auto px-4 md:px-6">
-                    <h1 className="text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+                    <h1 className="text-4xl font-bold text-center mb-12 text-white">
                         My Blog
                     </h1>
 
@@ -60,14 +60,14 @@ export default async function Blog() {
                                 <Link
                                     key={index}
                                     href={`/blog/${post.slug}`}
-                                    className="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200 dark:border-gray-700"
+                                    className="block p-6 bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-700"
                                 >
                                     <div className="flex flex-col md:flex-row md:items-stretch gap-6">
                                         <div className="flex-1">
-                                            <h2 className="text-2xl font-semibold mb-2 text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400">
+                                            <h2 className="text-2xl font-semibold mb-2 text-white hover:text-blue-400">
                                                 {post.title}
                                             </h2>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                                            <p className="text-sm text-gray-400 mb-3">
                                                 {new Date(post.publishedDate || post.published_date).toLocaleDateString('en-US', {
                                                     year: 'numeric',
                                                     month: 'long',
@@ -79,7 +79,7 @@ export default async function Blog() {
                                                     {post.tags.map((tag: string, tagIndex: number) => (
                                                         <span
                                                             key={tagIndex}
-                                                            className="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full"
+                                                            className="px-3 py-1 text-xs bg-blue-900 text-blue-200 rounded-full"
                                                         >
                                                             {tag}
                                                         </span>
@@ -104,7 +104,7 @@ export default async function Blog() {
                         </div>
 
                         {sortedPosts.length === 0 && (
-                            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                            <div className="text-center py-12 text-gray-400">
                                 <p>No blog posts yet. Check back soon!</p>
                             </div>
                         )}

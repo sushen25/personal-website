@@ -316,7 +316,7 @@ export default function Chatbot() {
 
             {/* Chat Panel */}
             <div
-                className={`fixed right-0 top-0 h-full w-full md:w-[600px] lg:w-[700px] xl:w-[800px] bg-white dark:bg-gray-900 shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+                className={`fixed right-0 top-0 h-full w-full md:w-[600px] lg:w-[700px] xl:w-[800px] bg-gray-900 shadow-2xl z-40 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
                     } flex flex-col`}
             >
                 {/* Header */}
@@ -348,7 +348,7 @@ export default function Chatbot() {
                     {/* Suggested Prompts - show only when no user messages yet */}
                     {messages.length === 1 && messages[0].role === 'assistant' && (
                         <div className="space-y-3 mt-2">
-                            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
                                 Suggested Questions
                             </p>
                             <div className="flex flex-wrap gap-2">
@@ -365,7 +365,7 @@ export default function Chatbot() {
                                     </button>
                                 ))}
                             </div>
-                            <hr className="my-6 border-t border-gray-300 dark:border-gray-600" />
+                            <hr className="my-6 border-t border-gray-600" />
                         </div>
                     )}
 
@@ -377,7 +377,7 @@ export default function Chatbot() {
                             <div
                                 className={`max-w-[80%] rounded-lg px-4 py-2 ${message.role === 'user'
                                     ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                                    : 'bg-gray-800 text-gray-100'
                                     }`}
                             >
                                 {message.role === 'user' ? (
@@ -397,7 +397,7 @@ export default function Chatbot() {
                                                 strong: ({ children }) => <strong className="font-bold">{children}</strong>,
                                                 em: ({ children }) => <em className="italic">{children}</em>,
                                                 br: () => <br className="block my-2" />,
-                                                hr: () => <hr className="my-6 border-t border-gray-300 dark:border-gray-600" />,
+                                                hr: () => <hr className="my-6 border-t border-gray-600" />,
                                             }}
                                         >
                                             {normalizeMarkdown(message.content)}
@@ -409,7 +409,7 @@ export default function Chatbot() {
                     ))}
                     {isLoading && (
                         <div className="flex justify-start">
-                            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2">
+                            <div className="bg-gray-800 rounded-lg px-4 py-2">
                                 <div className="flex space-x-1">
                                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -422,7 +422,7 @@ export default function Chatbot() {
                 </div>
 
                 {/* Input */}
-                <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+                <div className="border-t border-gray-700 p-4">
                     <div className="flex gap-2">
                         <textarea
                             ref={inputRef}
@@ -430,7 +430,7 @@ export default function Chatbot() {
                             onChange={(e) => setInput(e.target.value)}
                             onKeyPress={handleKeyPress}
                             placeholder="Ask about Sushen's experience, skills, projects..."
-                            className="flex-1 resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="flex-1 resize-none rounded-lg border border-gray-600 bg-gray-800 text-gray-100 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             rows={1}
                             style={{ minHeight: '40px', maxHeight: '120px' }}
                             onInput={(e) => {
@@ -450,7 +450,7 @@ export default function Chatbot() {
                             </svg>
                         </button>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+                    <p className="text-xs text-gray-400 mt-2 text-center">
                         Ask me anything about Sushen&apos;s professional background
                     </p>
                 </div>
@@ -459,7 +459,7 @@ export default function Chatbot() {
             {/* Backdrop */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/20 dark:bg-black/40 z-30 md:hidden"
+                    className="fixed inset-0 bg-black/40 z-30 md:hidden"
                     onClick={() => setIsOpen(false)}
                 />
             )}

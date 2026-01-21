@@ -9,9 +9,9 @@ export default function Skills() {
     ];
 
     return (
-        <section className="py-16 bg-gray-50 dark:bg-gray-800">
+        <section className="py-16 bg-gray-800">
             <div className="container mx-auto px-4 md:px-6">
-                <h2 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+                <h2 className="text-3xl font-bold text-center mb-8 text-white">
                     Skills
                 </h2>
 
@@ -20,7 +20,7 @@ export default function Skills() {
                         {skills.map((skill, index) => (
                             <span
                                 key={index}
-                                className="px-4 py-2 bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm border border-gray-200 dark:border-gray-600"
+                                className="px-4 py-2 bg-gray-700 rounded-full text-gray-200 shadow-sm border border-gray-600"
                             >
                                 {skill}
                             </span>

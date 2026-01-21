@@ -8,10 +8,10 @@ export default function Resume() {
 
             <main className="flex-1 pt-24 pb-16 flex flex-col items-center">
                 <div className="container mx-auto px-4 md:px-6 max-w-4xl w-full">
-                    <h1 className="text-4xl font-bold mb-8 text-center text-gray-900 dark:text-white">
+                    <h1 className="text-4xl font-bold mb-8 text-center text-white">
                         Resume
                     </h1>
-                    <div className="w-full h-[80vh] rounded-xl shadow-lg overflow-hidden bg-white dark:bg-gray-800">
+                    <div className="w-full h-[80vh] rounded-xl shadow-lg overflow-hidden bg-gray-800">
                         <iframe
                             src="/resume.pdf"
                             title="Resume PDF"

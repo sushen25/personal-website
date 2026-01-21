@@ -38,7 +38,7 @@ async function getPosts() {
 async function getPost(slug: string) {
     try {
         const res = await fetch(`${API_URL}/api/blog/${slug}`, {
-            cache: 'force-cache'
+            next: { revalidate: 3600 } // Cache for 1 hour in production, but fetch fresh during build
         });
 
         if (!res.ok) {
@@ -104,7 +104,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         {/* Back to blog link */}
                         <Link
                             href="/blog"
-                            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mb-8 transition-colors"
+                            className="inline-flex items-center text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mb-8 transition-colors"
                         >
                             <svg
                                 className="w-5 h-5 mr-2"
@@ -125,10 +125,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
                         {/* Post header */}
                         <header className="mb-8">
-                            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
+                            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
                                 {post.title}
                             </h1>
-                            <p className="text-gray-600 dark:text-gray-400 mb-4">
+                            <p className="text-gray-400 mb-4">
                                 {new Date(post.publishedDate || post.published_date).toLocaleDateString('en-US', {
                                     year: 'numeric',
                                     month: 'long',
@@ -140,7 +140,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                                     {post.tags.map((tag: string, index: number) => (
                                         <span
                                             key={index}
-                                            className="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full"
+                                            className="px-3 py-1 text-sm bg-blue-900 text-blue-200 rounded-full"
                                         >
                                             {tag}
                                         </span>
